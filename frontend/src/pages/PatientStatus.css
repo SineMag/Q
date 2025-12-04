@@ -89,6 +89,11 @@
   margin-bottom: 12px;
 }
 
+.completed-icon {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
 .in-progress-info p,
 .completed-info p {
   font-size: 16px;

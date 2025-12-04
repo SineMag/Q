@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { queueApi, patientsApi } from '../services/api';
 import './PatientStatus.css';
@@ -163,7 +164,9 @@ export default function PatientStatus() {
 
         {queueEntry.status === 'completed' && (
           <div className="completed-info">
-            <h3>✓ Visit Completed</h3>
+            <h3>
+              <FaCheckCircle aria-hidden="true" className="completed-icon" /> Visit Completed
+            </h3>
             <p>Thank you for your visit. We hope you're feeling better!</p>
             {queueEntry.actual_wait_minutes && (
               <p className="wait-summary">

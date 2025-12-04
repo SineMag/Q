@@ -47,7 +47,7 @@ export default function Layout({ children }: LayoutProps) {
       </main>
       <footer className="footer">
         <div className="container">
-          <p>&copy; 2024 Q Healthcare System. Built with care for better patient flow.</p>
+          <p>&copy; 2025 Q Healthcare System | Built with care for better patient flow | StackSisters Team</p>
         </div>
       </footer>
     </div>

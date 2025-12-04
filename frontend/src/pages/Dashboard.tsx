@@ -1,4 +1,12 @@
 import { useEffect, useState } from 'react';
+import {
+  FaHourglassHalf,
+  FaUserMd,
+  FaCheckCircle,
+  FaStopwatch,
+  FaAmbulance,
+  FaExclamationTriangle,
+} from 'react-icons/fa';
 import { queueApi } from '../services/api';
 import './Dashboard.css';
 
@@ -43,7 +51,9 @@ export default function Dashboard() {
 
       <div className="stats-grid">
         <div className="stat-card stat-waiting">
-          <div className="stat-icon">⏳</div>
+          <div className="stat-icon" aria-hidden="true">
+            <FaHourglassHalf />
+          </div>
           <div className="stat-content">
             <div className="stat-value">{stats?.waiting_count || '0'}</div>
             <div className="stat-label">Waiting</div>
@@ -51,7 +61,9 @@ export default function Dashboard() {
         </div>
 
         <div className="stat-card stat-progress">
-          <div className="stat-icon">👨‍⚕️</div>
+          <div className="stat-icon" aria-hidden="true">
+            <FaUserMd />
+          </div>
           <div className="stat-content">
             <div className="stat-value">{stats?.in_progress_count || '0'}</div>
             <div className="stat-label">In Progress</div>
@@ -59,7 +71,9 @@ export default function Dashboard() {
         </div>
 
         <div className="stat-card stat-completed">
-          <div className="stat-icon">✅</div>
+          <div className="stat-icon" aria-hidden="true">
+            <FaCheckCircle />
+          </div>
           <div className="stat-content">
             <div className="stat-value">{stats?.completed_count || '0'}</div>
             <div className="stat-label">Completed</div>
@@ -67,7 +81,9 @@ export default function Dashboard() {
         </div>
 
         <div className="stat-card stat-wait-time">
-          <div className="stat-icon">⏱️</div>
+          <div className="stat-icon" aria-hidden="true">
+            <FaStopwatch />
+          </div>
           <div className="stat-content">
             <div className="stat-value">
               {stats?.avg_wait_time 
@@ -79,7 +95,9 @@ export default function Dashboard() {
         </div>
 
         <div className="stat-card stat-immediate">
-          <div className="stat-icon">🚨</div>
+          <div className="stat-icon" aria-hidden="true">
+            <FaAmbulance />
+          </div>
           <div className="stat-content">
             <div className="stat-value">{stats?.immediate_count || '0'}</div>
             <div className="stat-label">Immediate</div>
@@ -87,7 +105,9 @@ export default function Dashboard() {
         </div>
 
         <div className="stat-card stat-urgent">
-          <div className="stat-icon">⚠️</div>
+          <div className="stat-icon" aria-hidden="true">
+            <FaExclamationTriangle />
+          </div>
           <div className="stat-content">
             <div className="stat-value">{stats?.urgent_count || '0'}</div>
             <div className="stat-label">Urgent</div>
