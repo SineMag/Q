@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
 import { queueApi, staffApi } from '../services/api';
 import './QueueView.css';
 
@@ -206,7 +207,12 @@ export default function QueueView() {
                   </div>
                 ) : (
                   <div className="assign-staff">
-                    <label htmlFor={`staff-${entry.id}`}>Assign Staff:</label>
+                    <div className="assign-staff-header">
+                      <label htmlFor={`staff-${entry.id}`}>Assign Staff:</label>
+                      <span className="availability-hint">
+                        <FaCheckCircle aria-hidden="true" /> Available
+                      </span>
+                    </div>
                     <select
                       id={`staff-${entry.id}`}
                       className="select"
@@ -222,7 +228,7 @@ export default function QueueView() {
                         .filter((s) => s.is_available || s.id === entry.staff_id)
                         .map((s) => (
                           <option key={s.id} value={s.id}>
-                            {s.name} ({s.role}) {s.is_available ? '✓' : ''}
+                              {`${s.name} (${s.role})${s.is_available ? ' - Available' : ''}`}
                           </option>
                         ))}
                     </select>

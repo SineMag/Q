@@ -178,6 +178,22 @@
   gap: 8px;
 }
 
+.assign-staff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.availability-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-success);
+  font-weight: 600;
+}
+
 .assign-staff label {
   font-weight: 500;
   color: var(--color-text);
