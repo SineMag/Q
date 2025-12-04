@@ -1,0 +1,182 @@
+:root {
+  /* Warm, welcoming healthcare colors */
+  --color-primary: #4A90A4;
+  --color-primary-light: #6BA8B8;
+  --color-primary-dark: #357A8A;
+  --color-secondary: #E8D5B7;
+  --color-accent: #D4A574;
+  --color-success: #7FB069;
+  --color-warning: #F4A261;
+  --color-danger: #E76F51;
+  
+  /* Neutral warm tones */
+  --color-bg: #FEFCF9;
+  --color-bg-secondary: #F9F7F4;
+  --color-surface: #FFFFFF;
+  --color-text: #2C3E50;
+  --color-text-light: #6C7A89;
+  --color-border: #E5E1D8;
+  
+  /* Triage colors */
+  --triage-immediate: #E76F51;
+  --triage-urgent: #F4A261;
+  --triage-semi-urgent: #E9C46A;
+  --triage-non-urgent: #7FB069;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 144, 164, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-accent);
+}
+
+.btn-success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #6A9A5A;
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border);
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background-color: var(--color-surface);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 144, 164, 0.1);
+}
+
+.select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: var(--color-surface);
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 144, 164, 0.1);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-immediate {
+  background-color: rgba(231, 111, 81, 0.15);
+  color: var(--triage-immediate);
+}
+
+.badge-urgent {
+  background-color: rgba(244, 162, 97, 0.15);
+  color: var(--triage-urgent);
+}
+
+.badge-semi-urgent {
+  background-color: rgba(233, 196, 106, 0.15);
+  color: var(--triage-semi-urgent);
+}
+
+.badge-non-urgent {
+  background-color: rgba(127, 176, 105, 0.15);
+  color: var(--triage-non-urgent);
+}
+
+.badge-waiting {
+  background-color: rgba(74, 144, 164, 0.15);
+  color: var(--color-primary);
+}
+
+.badge-in-progress {
+  background-color: rgba(127, 176, 105, 0.15);
+  color: var(--color-success);
+}
+
+.badge-completed {
+  background-color: rgba(108, 122, 137, 0.15);
+  color: var(--color-text-light);
+}
+
