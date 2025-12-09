@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../services/auth';
-import './Register.css'; // Import the CSS file
-import SimpleNavbar from '../../components/SimpleNavbar'; // Import SimpleNavbar
-import SimpleFooter from '../../components/SimpleFooter'; // Import SimpleFooter
+import './Register.css'; 
+import SimpleNavbar from '../../components/SimpleNavbar'; 
+import SimpleFooter from '../../components/SimpleFooter'; 
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -22,16 +22,15 @@ const Register = () => {
     }
 
     try {
-      // Assuming 'admin' role for now, adjust as needed
       await authApi.register({ email, password, role: 'admin' });
-      navigate('/login'); // Redirect to login after successful registration
+      navigate('/login'); 
     } catch (err) {
       setError('Failed to register. Please try again.');
     }
   };
 
   return (
-    <div className="auth-page-wrapper"> {/* New wrapper for full page layout */}
+    <div className="auth-page-wrapper"> 
       <SimpleNavbar />
       <div className="register-container">
         <div className="register-card">

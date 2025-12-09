@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../services/auth';
-import './PatientRegister.css'; // Import the CSS file
-import SimpleNavbar from '../../components/SimpleNavbar'; // Import SimpleNavbar
-import SimpleFooter from '../../components/SimpleFooter'; // Import SimpleFooter
+import './PatientRegister.css';
+import SimpleNavbar from '../../components/SimpleNavbar'; 
+import SimpleFooter from '../../components/SimpleFooter'; 
 
 const PatientRegister = () => {
   const [email, setEmail] = useState('');
@@ -30,7 +30,7 @@ const PatientRegister = () => {
   };
 
   return (
-    <div className="auth-page-wrapper"> {/* New wrapper for full page layout */}
+    <div className="auth-page-wrapper"> 
       <SimpleNavbar />
       <div className="patient-register-container">
         <div className="patient-register-card">

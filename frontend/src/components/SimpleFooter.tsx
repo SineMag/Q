@@ -1,4 +1,3 @@
-// frontend/src/components/SimpleFooter.tsx
 import './SimpleFooter.css';
 
 const SimpleFooter = () => {

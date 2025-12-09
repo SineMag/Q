@@ -14,7 +14,7 @@ function calculatePriorityScore(triageLevel: string, waitMinutes: number): numbe
   };
   
   const baseScore = triageWeights[triageLevel] || 0;
-  const waitBonus = Math.min(waitMinutes * 2, 200); // Max 200 points for waiting
+  const waitBonus = Math.min(waitMinutes * 2, 200); // Max 200 for waiting
   
   return baseScore + waitBonus;
 }
@@ -76,7 +76,7 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-// Add patient to queue (check-in)
+// Add patient to queue (check-in patient)
 router.post('/check-in', async (req, res) => {
   try {
     const { patient_id, triage_level, notes } = req.body;
@@ -85,7 +85,7 @@ router.post('/check-in', async (req, res) => {
       return res.status(400).json({ error: 'Patient ID and triage level are required' });
     }
 
-    // Calculate estimated wait time (simplified - in real app, this would use AI)
+    // Calculate estimated wait time (simplified .... in some apps, this would use AI/google)
     const waitingCount = await pool.query(
       'SELECT COUNT(*) FROM queue WHERE status = $1',
       ['waiting']

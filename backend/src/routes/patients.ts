@@ -3,6 +3,7 @@ import { pool } from '../db/index.js';
 import { broadcastUpdate } from '../index.js';
 
 const router = express.Router();
+// CRUD operations for patients..
 
 // Get all patients
 router.get('/', async (req, res) => {

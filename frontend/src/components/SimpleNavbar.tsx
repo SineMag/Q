@@ -1,4 +1,3 @@
-// frontend/src/components/SimpleNavbar.tsx
 import { Link } from 'react-router-dom';
 import './SimpleNavbar.css';
 

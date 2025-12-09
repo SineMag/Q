@@ -8,7 +8,7 @@ import Patients from './pages/Patients';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import PatientLogin from './pages/auth/PatientLogin';
-import PatientRegister from './pages/auth/PatientRegister'; // Import the new PatientRegister component
+import PatientRegister from './pages/auth/PatientRegister'; 
 import Landing from './pages/auth/Landing';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -16,13 +16,14 @@ function App() {
   return (
     <Router>
       <Routes>
+
         {/* Auth routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/patient-login" element={<PatientLogin />} />
-        <Route path="/patient-register" element={<PatientRegister />} /> {/* New route for Patient Register */}
-
+        <Route path="/patient-register" element={<PatientRegister />} /> 
+        
         {/* App routes */}
         <Route
           path="/patients"

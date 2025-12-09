@@ -95,7 +95,7 @@ export async function initializeDatabase() {
       CREATE INDEX IF NOT EXISTS idx_queue_staff ON queue(staff_id);
     `);
 
-    // Insert default staff members if none exist
+    // Insert default staff members if none exist..fake data for testing
     const staffCount = await client.query('SELECT COUNT(*) FROM staff');
     if (parseInt(staffCount.rows[0].count) === 0) {
       await client.query(`

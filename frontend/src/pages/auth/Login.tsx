@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { authApi } from '../../services/auth';
 import { z } from 'zod';
-import './Login.css'; // Import the CSS file
-import SimpleNavbar from '../../components/SimpleNavbar'; // Import SimpleNavbar
-import SimpleFooter from '../../components/SimpleFooter'; // Import SimpleFooter
+import './Login.css'; 
+import SimpleNavbar from '../../components/SimpleNavbar';
+import SimpleFooter from '../../components/SimpleFooter'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -27,7 +27,7 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-page-wrapper"> {/* New wrapper for full page layout */}
+    <div className="auth-page-wrapper"> 
       <SimpleNavbar />
       <div className="login-container">
         <div className="login-card">

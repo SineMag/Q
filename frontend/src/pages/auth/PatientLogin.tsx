@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { authApi } from '../../services/auth';
-import './PatientLogin.css'; // Import the CSS file
-import SimpleNavbar from '../../components/SimpleNavbar'; // Import SimpleNavbar
-import SimpleFooter from '../../components/SimpleFooter'; // Import SimpleFooter
+import './PatientLogin.css';
+import SimpleNavbar from '../../components/SimpleNavbar'; 
+import SimpleFooter from '../../components/SimpleFooter'; 
 
 const PatientLogin = () => {
   const [email, setEmail] = useState('');
@@ -26,7 +26,7 @@ const PatientLogin = () => {
   };
 
   return (
-    <div className="auth-page-wrapper"> {/* New wrapper for full page layout */}
+    <div className="auth-page-wrapper"> 
       <SimpleNavbar />
       <div className="patient-login-container">
         <div className="patient-login-card">

@@ -3,6 +3,28 @@ import { pool } from '../db/index.js';
 
 const router = express.Router();
 
+// CRUD but without Delete for staff members
+
+// Create new staff member
+router.post('/', async (req, res) => {
+  try {
+    const { name, role, is_available } = req.body;
+    if (!name || !role) {
+      return res.status(400).json({ error: 'Name and role are required' });
+    }
+    const result = await pool.query(
+      `INSERT INTO staff (name, role, is_available)
+       VALUES ($1, $2, $3)
+        RETURNING *`,
+      [name, role, is_available !== undefined ? is_available : true]
+    );
+  }
+  catch (error) {
+    console.error('Error creating staff member:', error);
+    res.status(500).json({ error: 'Failed to create staff member' });
+  }});
+
+  
 // Get all staff
 router.get('/', async (req, res) => {
   try {
