@@ -1,27 +1,27 @@
 :root {
   /* Warm, welcoming healthcare colors */
-  --color-primary: #4A90A4;
-  --color-primary-light: #6BA8B8;
-  --color-primary-dark: #357A8A;
-  --color-secondary: #E8D5B7;
-  --color-accent: #D4A574;
-  --color-success: #7FB069;
-  --color-warning: #F4A261;
-  --color-danger: #E76F51;
-  
+  --color-primary: #4a90a4;
+  --color-primary-light: #6ba8b8;
+  --color-primary-dark: #357a8a;
+  --color-secondary: #e8d5b7;
+  --color-accent: #d4a574;
+  --color-success: #7fb069;
+  --color-warning: #f4a261;
+  --color-danger: #e76f51;
+
   /* Neutral warm tones */
-  --color-bg: #FEFCF9;
-  --color-bg-secondary: #F9F7F4;
-  --color-surface: #FFFFFF;
-  --color-text: #2C3E50;
-  --color-text-light: #6C7A89;
-  --color-border: #E5E1D8;
-  
+  --color-bg: #fefcf9;
+  --color-bg-secondary: #f9f7f4;
+  --color-surface: #ffffff;
+  --color-text: #2c3e50;
+  --color-text-light: #6c7a89;
+  --color-border: #e5e1d8;
+
   /* Triage colors */
-  --triage-immediate: #E76F51;
-  --triage-urgent: #F4A261;
-  --triage-semi-urgent: #E9C46A;
-  --triage-non-urgent: #7FB069;
+  --triage-immediate: #e76f51;
+  --triage-urgent: #f4a261;
+  --triage-semi-urgent: #e9c46a;
+  --triage-non-urgent: #7fb069;
 }
 
 * {
@@ -31,8 +31,8 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -42,7 +42,7 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -72,7 +72,6 @@ code {
 
 .btn-primary:hover {
   background-color: var(--color-primary-dark);
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(74, 144, 164, 0.3);
 }
 
@@ -91,7 +90,7 @@ code {
 }
 
 .btn-success:hover {
-  background-color: #6A9A5A;
+  background-color: #6a9a5a;
 }
 
 .card {
@@ -178,4 +177,3 @@ code {
   background-color: rgba(108, 122, 137, 0.15);
   color: var(--color-text-light);
 }
-

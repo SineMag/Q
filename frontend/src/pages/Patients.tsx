@@ -1,38 +1,38 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  FaHeartbeat,
   FaClipboardCheck,
   FaClock,
-  FaMapMarkerAlt,
-  FaMobileAlt,
   FaShieldAlt,
-  FaUserFriends,
+  FaMobileAlt,
   FaInfoCircle,
-} from 'react-icons/fa';
-import './Patients.css';
+  FaHeartbeat,
+  FaMapMarkerAlt,
+  FaUserFriends,
+} from "react-icons/fa";
+import "./Patients.css";
 
 export default function Patients() {
-  const [patientId, setPatientId] = useState('');
-  const [statusError, setStatusError] = useState('');
+  const [patientId, setPatientId] = useState("");
+  const [statusError, setStatusError] = useState("");
   const navigate = useNavigate();
 
   const handleStatusLookup = (event: React.FormEvent) => {
     event.preventDefault();
     const normalizedId = patientId.trim();
     if (!normalizedId) {
-      setStatusError('Enter your patient code to continue.');
+      setStatusError("Enter your patient code to continue.");
       return;
     }
 
     const safeId = normalizedId.match(/^[a-zA-Z0-9-]+$/);
     if (!safeId) {
-      setStatusError('Use only letters, numbers, or dashes in your code.');
+      setStatusError("Use only letters, numbers, or dashes in your code.");
       return;
     }
 
-    setStatusError('');
-    navigate(`/status/${encodeURIComponent(normalizedId)}`);
+    setStatusError("");
+    navigate(`/track-visit?code=${encodeURIComponent(normalizedId)}`);
   };
 
   return (
@@ -44,19 +44,19 @@ export default function Patients() {
           </p>
           <h1>Check in, stay informed, and feel confident about your visit</h1>
           <p>
-            Q keeps patients updated from arrival to discharge. Save your spot, monitor your
-            estimated wait, and know when it is your turn without needing access to the
-            administrative dashboard.
+            Q keeps patients updated from arrival to discharge. Save your spot,
+            monitor your estimated wait, and know when it is your turn without
+            needing access to the administrative dashboard.
           </p>
           <div className="hero-actions">
             <Link to="/check-in" className="btn btn-primary">
               <FaClipboardCheck aria-hidden="true" />
               Start Check-In
             </Link>
-            <a href="#track-status" className="btn btn-secondary">
+            <Link to="/track-visit" className="btn btn-secondary">
               <FaClock aria-hidden="true" />
               Track My Visit
-            </a>
+            </Link>
           </div>
         </div>
         <div className="hero-card">
@@ -75,7 +75,8 @@ export default function Patients() {
           <FaClipboardCheck aria-hidden="true" className="action-icon" />
           <h3>Check in digitally</h3>
           <p>
-            Answer triage questions before you arrive so the care team is ready when you walk in.
+            Answer triage questions before you arrive so the care team is ready
+            when you walk in.
           </p>
           <Link to="/check-in" className="btn btn-primary">
             Begin Check-In
@@ -84,7 +85,10 @@ export default function Patients() {
         <div className="action-card card">
           <FaClock aria-hidden="true" className="action-icon" />
           <h3>Follow your wait time</h3>
-          <p>Use your patient code to jump straight to the live status page at any time.</p>
+          <p>
+            Use your patient code to jump straight to the live status page at
+            any time.
+          </p>
           <form className="status-form" onSubmit={handleStatusLookup}>
             <label htmlFor="patient-id">Enter patient code</label>
             <input
@@ -94,7 +98,7 @@ export default function Patients() {
               value={patientId}
               onChange={(event) => {
                 setPatientId(event.target.value);
-                if (statusError) setStatusError('');
+                if (statusError) setStatusError("");
               }}
             />
             {statusError && <p className="status-error">{statusError}</p>}
@@ -107,7 +111,8 @@ export default function Patients() {
           <FaMapMarkerAlt aria-hidden="true" className="action-icon" />
           <h3>Know where to go</h3>
           <p>
-            Receive arrival instructions and facility guidance as soon as your visit is confirmed.
+            Receive arrival instructions and facility guidance as soon as your
+            visit is confirmed.
           </p>
           <button type="button" className="btn btn-secondary" disabled>
             Coming Soon
@@ -126,20 +131,24 @@ export default function Patients() {
         <div className="status-steps">
           {[
             {
-              title: 'Check-In',
-              description: 'Confirm your information and share the reason for your visit.',
+              title: "Check-In",
+              description:
+                "Confirm your information and share the reason for your visit.",
             },
             {
-              title: 'Waiting Room',
-              description: 'Watch the real-time wait estimate adjust as the queue moves.',
+              title: "Waiting Room",
+              description:
+                "Watch the real-time wait estimate adjust as the queue moves.",
             },
             {
-              title: 'In Progress',
-              description: 'Get notified when a clinician is assigned and you are being seen.',
+              title: "In Progress",
+              description:
+                "Get notified when a clinician is assigned and you are being seen.",
             },
             {
-              title: 'Visit Complete',
-              description: 'See a quick summary of your total visit time and next steps.',
+              title: "Visit Complete",
+              description:
+                "See a quick summary of your total visit time and next steps.",
             },
           ].map((step, index) => (
             <div key={step.title} className="status-step">
@@ -162,8 +171,8 @@ export default function Patients() {
               <FaUserFriends aria-hidden="true" /> Bring a support person
             </h3>
             <p>
-              Share your status link so a family member can keep track without needing access to
-              staff tools.
+              Share your status link so a family member can keep track without
+              needing access to staff tools.
             </p>
           </div>
           <div>
@@ -171,8 +180,8 @@ export default function Patients() {
               <FaShieldAlt aria-hidden="true" /> Your data stays private
             </h3>
             <p>
-              Only you and authorized care teams can see your medical details. We just use your
-              queue ID to look up status.
+              Only you and authorized care teams can see your medical details.
+              We just use your queue ID to look up status.
             </p>
           </div>
         </div>
@@ -180,5 +189,3 @@ export default function Patients() {
     </div>
   );
 }
-
-

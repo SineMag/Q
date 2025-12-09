@@ -1,4 +1,3 @@
-
 .auth-page-wrapper {
   display: flex;
   flex-direction: column;
@@ -6,28 +5,28 @@
 }
 
 .register-container {
-  flex-grow: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f2f5;
-  padding: 20px;
-  box-sizing: border-box;
+  background-color: var(--color-bg);
+  padding: 40px 20px;
+  min-height: 60vh;
 }
 
 .register-card {
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
   text-align: center;
+  border: 1px solid var(--color-border);
 }
 
 .register-card h2 {
   margin-bottom: 24px;
-  color: #333;
+  color: var(--color-primary-dark);
   font-size: 28px;
 }
 
@@ -39,52 +38,60 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #555;
-  font-weight: bold;
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 .form-group input[type="email"],
 .form-group input[type="password"] {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
   font-size: 16px;
   box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .register-button {
   width: 100%;
   padding: 12px;
-  background-color: #28a745; 
+  background-color: var(--color-primary);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 18px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-weight: 600;
 }
 
 .register-button:hover {
-  background-color: #218838;
+  background-color: var(--color-primary-dark);
 }
 
 .error-message {
-  color: #dc3545;
+  color: var(--color-danger);
   margin-top: 15px;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .link-text {
   margin-top: 20px;
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-light);
 }
 
 .link-text a {
-  color: #007bff;
+  color: var(--color-primary);
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .link-text a:hover {

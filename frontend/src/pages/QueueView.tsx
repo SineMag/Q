@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
-import { queueApi, staffApi } from '../services/api';
-import './QueueView.css';
+import { useEffect, useState } from "react";
+import { FaCheckCircle } from "react-icons/fa";
+import { queueApi, staffApi } from "../services/api";
+import "./QueueView.css";
 
 interface QueueEntry {
   id: number;
@@ -32,7 +32,9 @@ export default function QueueView() {
   const [queue, setQueue] = useState<QueueEntry[]>([]);
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<string>('all');
+  const [filter, setFilter] = useState<string>("all");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
   useEffect(() => {
     loadData();
@@ -40,49 +42,83 @@ export default function QueueView() {
     return () => clearInterval(interval);
   }, [filter]);
 
+  // Sort queue by priority: URGENT first, then by priority score
+  const sortedQueue = [...queue].sort((a, b) => {
+    // URGENT patients always come first
+    if (a.triage_level === "urgent" && b.triage_level !== "urgent") return -1;
+    if (a.triage_level !== "urgent" && b.triage_level === "urgent") return 1;
+
+    // Then sort by priority score (highest first)
+    return b.priority_score - a.priority_score;
+  });
+
   const loadData = async () => {
     try {
       const [queueRes, staffRes] = await Promise.all([
-        queueApi.getAll(filter !== 'all' ? filter : undefined),
+        queueApi.getAll(filter !== "all" ? filter : undefined),
         staffApi.getAll(),
       ]);
       setQueue(queueRes.data);
       setStaff(staffRes.data);
       setLoading(false);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
+      setError("Failed to load queue data");
       setLoading(false);
     }
   };
 
   const handleAssignStaff = async (queueId: number, staffId: number) => {
     try {
-      await queueApi.update(queueId, { staff_id: staffId, status: 'in_progress' });
+      setError("");
+      setSuccess("");
+      await queueApi.update(queueId, {
+        staff_id: staffId,
+        status: "in_progress",
+      });
+      setSuccess("Staff assigned successfully!");
       loadData();
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(""), 3000);
     } catch (error) {
-      console.error('Error assigning staff:', error);
+      console.error("Error assigning staff:", error);
+      setError("Failed to assign staff. Please try again.");
+
+      // Clear error message after 5 seconds
+      setTimeout(() => setError(""), 5000);
     }
   };
 
   const handleComplete = async (queueId: number) => {
     try {
+      setError("");
+      setSuccess("");
       await queueApi.complete(queueId);
+      setSuccess("Queue entry completed successfully!");
       loadData();
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(""), 3000);
     } catch (error) {
-      console.error('Error completing queue entry:', error);
+      console.error("Error completing queue entry:", error);
+      setError("Failed to complete queue entry. Please try again.");
+
+      // Clear error message after 5 seconds
+      setTimeout(() => setError(""), 5000);
     }
   };
 
   const getTriageBadgeClass = (level: string) => {
-    return `badge badge-${level.replace('_', '-')}`;
+    return `badge badge-${level.replace("_", "-")}`;
   };
 
   const getStatusBadgeClass = (status: string) => {
-    return `badge badge-${status.replace('_', '-')}`;
+    return `badge badge-${status.replace("_", "-")}`;
   };
 
   const formatTime = (minutes: number | null) => {
-    if (minutes === null) return 'N/A';
+    if (minutes === null) return "N/A";
     if (minutes < 60) return `${minutes} min`;
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -99,25 +135,43 @@ export default function QueueView() {
         <h1>Queue Management</h1>
         <div className="queue-filters">
           <button
-            className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
-            onClick={() => setFilter('all')}
+            className={`filter-btn ${filter === "all" ? "active" : ""}`}
+            onClick={() => setFilter("all")}
           >
             All
           </button>
           <button
-            className={`filter-btn ${filter === 'waiting' ? 'active' : ''}`}
-            onClick={() => setFilter('waiting')}
+            className={`filter-btn ${filter === "waiting" ? "active" : ""}`}
+            onClick={() => setFilter("waiting")}
           >
             Waiting
           </button>
           <button
-            className={`filter-btn ${filter === 'in_progress' ? 'active' : ''}`}
-            onClick={() => setFilter('in_progress')}
+            className={`filter-btn ${filter === "in_progress" ? "active" : ""}`}
+            onClick={() => setFilter("in_progress")}
           >
             In Progress
           </button>
         </div>
       </div>
+
+      {error && (
+        <div className="alert alert-error">
+          <span>{error}</span>
+          <button onClick={() => setError("")} className="alert-close">
+            ×
+          </button>
+        </div>
+      )}
+
+      {success && (
+        <div className="alert alert-success">
+          <span>{success}</span>
+          <button onClick={() => setSuccess("")} className="alert-close">
+            ×
+          </button>
+        </div>
+      )}
 
       <div className="queue-stats-bar">
         <div className="stat-item">
@@ -127,25 +181,30 @@ export default function QueueView() {
         <div className="stat-item">
           <span className="stat-label">Waiting:</span>
           <span className="stat-value">
-            {queue.filter((q) => q.status === 'waiting').length}
+            {queue.filter((q) => q.status === "waiting").length}
           </span>
         </div>
         <div className="stat-item">
           <span className="stat-label">In Progress:</span>
           <span className="stat-value">
-            {queue.filter((q) => q.status === 'in_progress').length}
+            {queue.filter((q) => q.status === "in_progress").length}
           </span>
         </div>
       </div>
 
       <div className="queue-list">
-        {queue.length === 0 ? (
+        {sortedQueue.length === 0 ? (
           <div className="empty-queue">
             <p>No patients in queue</p>
           </div>
         ) : (
-          queue.map((entry) => (
+          sortedQueue.map((entry) => (
             <div key={entry.id} className="queue-card">
+              {entry.triage_level === "urgent" && (
+                <div className="urgent-indicator">
+                  <div className="urgent-dot"></div>
+                </div>
+              )}
               <div className="queue-card-header">
                 <div className="patient-info">
                   <h3>
@@ -153,15 +212,12 @@ export default function QueueView() {
                   </h3>
                   <div className="badges">
                     <span className={getTriageBadgeClass(entry.triage_level)}>
-                      {entry.triage_level.replace('_', ' ')}
+                      {entry.triage_level.replace("_", " ")}
                     </span>
                     <span className={getStatusBadgeClass(entry.status)}>
-                      {entry.status.replace('_', ' ')}
+                      {entry.status.replace("_", " ")}
                     </span>
                   </div>
-                </div>
-                <div className="priority-score">
-                  Priority: {entry.priority_score}
                 </div>
               </div>
 
@@ -203,7 +259,8 @@ export default function QueueView() {
 
                 {entry.staff_name ? (
                   <div className="assigned-staff">
-                    <strong>Assigned to:</strong> {entry.staff_name} ({entry.staff_role})
+                    <strong>Assigned to:</strong> {entry.staff_name} (
+                    {entry.staff_role})
                   </div>
                 ) : (
                   <div className="assign-staff">
@@ -225,17 +282,21 @@ export default function QueueView() {
                     >
                       <option value="">Select staff member...</option>
                       {staff
-                        .filter((s) => s.is_available || s.id === entry.staff_id)
+                        .filter(
+                          (s) => s.is_available || s.id === entry.staff_id
+                        )
                         .map((s) => (
                           <option key={s.id} value={s.id}>
-                              {`${s.name} (${s.role})${s.is_available ? ' - Available' : ''}`}
+                            {`${s.name} (${s.role})${
+                              s.is_available ? " - Available" : ""
+                            }`}
                           </option>
                         ))}
                     </select>
                   </div>
                 )}
 
-                {entry.status === 'in_progress' && (
+                {entry.status === "in_progress" && (
                   <button
                     className="btn btn-success"
                     onClick={() => handleComplete(entry.id)}
@@ -251,4 +312,3 @@ export default function QueueView() {
     </div>
   );
 }
-

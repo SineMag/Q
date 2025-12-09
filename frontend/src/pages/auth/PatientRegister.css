@@ -1,4 +1,3 @@
-
 .auth-page-wrapper {
   display: flex;
   flex-direction: column;
@@ -6,28 +5,28 @@
 }
 
 .patient-register-container {
-  flex-grow: 1; 
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f2f5;
-  padding: 20px;
-  box-sizing: border-box;
+  background-color: var(--color-bg);
+  padding: 40px 20px;
+  min-height: 60vh;
 }
 
 .patient-register-card {
-  background-color: #ffffff;
+  background-color: var(--color-surface);
   padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
   text-align: center;
+  border: 1px solid var(--color-border);
 }
 
 .patient-register-card h2 {
   margin-bottom: 24px;
-  color: #333;
+  color: var(--color-primary-dark);
   font-size: 28px;
 }
 
@@ -56,7 +55,7 @@
 .patient-register-button {
   width: 100%;
   padding: 12px;
-  background-color: #20c997; 
+  background-color: #20c997;
   color: white;
   border: none;
   border-radius: 4px;
@@ -82,7 +81,7 @@
 }
 
 .link-text a {
-  color: #20c997; 
+  color: #20c997;
   text-decoration: none;
   font-weight: bold;
 }
