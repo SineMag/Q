@@ -1,0 +1,38 @@
+/* frontend/src/components/SimpleFooter.css */
+
+.simple-footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+    margin-top: auto; /* Pushes the footer to the bottom */
+}
+
+.simple-footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.simple-footer p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+    .simple-footer p {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .simple-footer {
+        padding: 15px 0;
+    }
+    .simple-footer p {
+        font-size: 12px;
+    }
+}

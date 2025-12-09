@@ -2,9 +2,9 @@ services:
   - type: web
     name: q-backend
     runtime: node
-    repo: https://github.com/SineMag/Q # Replace with your repository URL
-    region: oregon # optional, region closest to you
-    plan: free # optional, see https://render.com/pricing
+    repo: https://github.com/SineMag/Q 
+    region: oregon 
+    plan: free 
     rootDir: backend
     buildCommand: npm install && npm run build
     startCommand: npm start
@@ -22,4 +22,4 @@ services:
 databases:
   - name: q-db
     databaseName: q_healthcare
-    plan: free # optional, see https://render.com/pricing
+    plan: free 

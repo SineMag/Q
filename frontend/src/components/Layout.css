@@ -65,6 +65,22 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.logout-button {
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: var(--color-accent-dark);
+}
+
 .main {
   flex: 1;
   padding: 40px 0;

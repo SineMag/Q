@@ -1,0 +1,86 @@
+/* frontend/src/components/SimpleNavbar.css */
+
+.simple-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.simple-navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.simple-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+}
+
+.simple-logo h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #007bff;
+    line-height: 1;
+}
+
+.simple-logo-subtitle {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #666;
+    line-height: 1;
+}
+
+.simple-nav a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    margin-left: 25px;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.simple-nav a:hover {
+    color: #0056b3;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 768px) {
+    .simple-navbar-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .simple-logo {
+        margin-bottom: 15px;
+    }
+
+    .simple-nav {
+        margin-top: 10px;
+    }
+
+    .simple-nav a {
+        margin: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .simple-logo h1 {
+        font-size: 24px;
+    }
+
+    .simple-logo-subtitle {
+        font-size: 12px;
+    }
+
+    .simple-nav a {
+        font-size: 14px;
+        margin: 0 8px;
+    }
+}

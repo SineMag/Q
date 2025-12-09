@@ -35,7 +35,6 @@ export default function PatientCheckIn() {
     setLoading(true);
 
     try {
-      const response = await patientsApi.create(patientData);
       const patientId = response.data.id;
       
       setStep(2);
@@ -60,8 +59,7 @@ export default function PatientCheckIn() {
         notes: queueData.notes,
       });
 
-      navigate((`/status/${patientId}`);
-    } catch (err: any) {
+             navigate(`/status/${patientId}`);    } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to check in patient');
     } finally {
       setLoading(false);

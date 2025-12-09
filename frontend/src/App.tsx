@@ -6,6 +6,7 @@ import PatientStatus from './pages/PatientStatus';
 import QueueView from './pages/QueueView';
 import Patients from './pages/Patients';
 import Login from './pages/auth/Login';
+import Register from './pages/auth/Register'; // Import the new Register component
 import PatientLogin from './pages/auth/PatientLogin';
 import Landing from './pages/auth/Landing';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -16,7 +17,8 @@ function App() {
       <Routes>
         {/* Auth routes */}
         <Route path="/" element={<Landing />} />
-        <Route path="/admin-login" element={<Login />} />
+        <Route path="/login" element={<Login />} /> {/* Updated path */}
+        <Route path="/register" element={<Register />} /> {/* New route for Register */}
         <Route path="/patient-login" element={<PatientLogin />} />
 
         {/* App routes */}

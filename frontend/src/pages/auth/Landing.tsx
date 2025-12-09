@@ -7,7 +7,7 @@ const Landing = () => {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       <h1>Welcome</h1>
       <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
-        <button onClick={() => navigate('/admin-login')} style={{ padding: '10px 20px', cursor: 'pointer' }}>
+        <button onClick={() => navigate('/login')} style={{ padding: '10px 20px', cursor: 'pointer' }}>
           Admin
         </button>
         <button onClick={() => navigate('/patient-login')} style={{ padding: '10px 20px', cursor: 'pointer' }}>
