@@ -8,6 +8,7 @@ import Patients from './pages/Patients';
 import Login from './pages/auth/Login';
 import PatientLogin from './pages/auth/PatientLogin';
 import Landing from './pages/auth/Landing';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -18,26 +19,56 @@ function App() {
         <Route path="/admin-login" element={<Login />} />
         <Route path="/patient-login" element={<PatientLogin />} />
 
-        {/* App routes with Layout */}
+        {/* App routes */}
         <Route
           path="/patients"
-          element={<Layout><Patients /></Layout>}
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'patient']}>
+              <Layout>
+                <Patients />
+              </Layout>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/dashboard"
-          element={<Layout><Dashboard /></Layout>}
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/check-in"
-          element={<Layout><PatientCheckIn /></Layout>}
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'patient']}>
+              <Layout>
+                <PatientCheckIn />
+              </Layout>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/queue"
-          element={<Layout><QueueView /></Layout>}
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Layout>
+                <QueueView />
+              </Layout>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/status/:patientId"
-          element={<Layout><PatientStatus /></Layout>}
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Layout>
+                <PatientStatus />
+              </Layout>
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </Router>

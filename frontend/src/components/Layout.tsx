@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import "./Layout.css";
+import { useAuth } from "../contexts/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -7,6 +8,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const isActive = (path: string) => {
     return (
@@ -24,28 +26,54 @@ export default function Layout({ children }: LayoutProps) {
               <span className="logo-subtitle">Queue & Triage Companion</span>
             </Link>
             <nav className="nav">
-              <Link
-                to="/patients"
-                className={isActive("/patients") ? "active" : ""}
-              >
-                Patients
-              </Link>
-              <Link
-                to="/dashboard"
-                className={isActive("/dashboard") ? "active" : ""}
-              >
-                Dashboard
-              </Link>
-              <Link to="/queue" className={isActive("/queue") ? "active" : ""}>
-                Queue
-              </Link>
-              <Link
-                to="/check-in"
-                className={isActive("/check-in") ? "active" : ""}
-              >
-                Check In
-              </Link>
+              {user?.role === "admin" && (
+                <>
+                  <Link
+                    to="/patients"
+                    className={isActive("/patients") ? "active" : ""}
+                  >
+                    Patients
+                  </Link>
+                  <Link
+                    to="/dashboard"
+                    className={isActive("/dashboard") ? "active" : ""}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/queue"
+                    className={isActive("/queue") ? "active" : ""}
+                  >
+                    Queue
+                  </Link>
+                  <Link
+                    to="/check-in"
+                    className={isActive("/check-in") ? "active" : ""}
+                  >
+                    Check In
+                  </Link>
+                </>
+              )}
+              {user?.role === "patient" && (
+                <>
+                  <Link
+                    to="/patients"
+                    className={isActive("/patients") ? "active" : ""}
+                  >
+                    Patients
+                  </Link>
+                  <Link
+                    to="/check-in"
+                    className={isActive("/check-in") ? "active" : ""}
+                  >
+                    Check In
+                  </Link>
+                </>
+              )}
             </nav>
+            <button onClick={logout} className="logout-button">
+              Logout
+            </button>
           </div>
         </div>
       </header>
