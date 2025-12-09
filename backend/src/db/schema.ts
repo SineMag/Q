@@ -21,6 +21,26 @@ export async function initializeDatabase() {
       END $$;
     `);
 
+    await client.query(`
+      DO $$ BEGIN
+        CREATE TYPE user_role AS ENUM ('admin', 'patient');
+      EXCEPTION
+        WHEN duplicate_object THEN null;
+      END $$;
+    `);
+
+    // Create users table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        role user_role NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     // Create staff table
     await client.query(`
       CREATE TABLE IF NOT EXISTS staff (

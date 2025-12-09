@@ -25,7 +25,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadStats();
-    const interval = setInterval(loadStats, 5000); // Refresh every 5 seconds
+    const interval = setInterval(loadStats, 5000);
     return () => clearInterval(interval);
   }, []);
 

@@ -38,9 +38,7 @@ export default function PatientCheckIn() {
       const response = await patientsApi.create(patientData);
       const patientId = response.data.id;
       
-      // Move to step 2 with patient ID
       setStep(2);
-      // Store patient ID for queue check-in
       (window as any).tempPatientId = patientId;
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to create patient record');
@@ -62,8 +60,7 @@ export default function PatientCheckIn() {
         notes: queueData.notes,
       });
 
-      // Navigate to patient status page
-      navigate(`/status/${patientId}`);
+      navigate((`/status/${patientId}`);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to check in patient');
     } finally {

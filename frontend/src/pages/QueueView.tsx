@@ -36,7 +36,7 @@ export default function QueueView() {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 3000); // Refresh every 3 seconds
+    const interval = setInterval(loadData, 3000);
     return () => clearInterval(interval);
   }, [filter]);
 

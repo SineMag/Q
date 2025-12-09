@@ -8,6 +8,7 @@ import { initializeDatabase } from './db/schema.js';
 import patientRoutes from './routes/patients.js';
 import queueRoutes from './routes/queue.js';
 import staffRoutes from './routes/staff.js';
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.get('/health', (req, res) => {
 app.use('/api/patients', patientRoutes);
 app.use('/api/queue', queueRoutes);
 app.use('/api/staff', staffRoutes);
+app.use('/api/auth', authRoutes);
 
 // Create HTTP server
 const server = createServer(app);

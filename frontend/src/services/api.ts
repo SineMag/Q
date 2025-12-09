@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Patients
 export const patientsApi = {
   getAll: () => api.get('/patients'),
   getById: (id: number) => api.get(`/patients/${id}`),
@@ -17,7 +16,6 @@ export const patientsApi = {
   update: (id: number, data: any) => api.put(`/patients/${id}`, data),
 };
 
-// Queue
 export const queueApi = {
   getAll: (status?: string) => api.get('/queue', { params: { status } }),
   getStats: () => api.get('/queue/stats'),
@@ -27,7 +25,6 @@ export const queueApi = {
   getPatientStatus: (patientId: number) => api.get(`/queue/patient/${patientId}`),
 };
 
-// Staff
 export const staffApi = {
   getAll: () => api.get('/staff'),
   getAvailable: () => api.get('/staff/available'),

@@ -36,7 +36,7 @@ export default function PatientStatus() {
   useEffect(() => {
     if (patientId) {
       loadData();
-      const interval = setInterval(loadData, 5000); // Refresh every 5 seconds
+      const interval = setInterval(loadData, 5000);
       return () => clearInterval(interval);
     }
   }, [patientId]);
