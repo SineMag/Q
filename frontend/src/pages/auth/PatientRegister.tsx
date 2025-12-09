@@ -1,36 +1,40 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
 import { authApi } from '../../services/auth';
-import './PatientLogin.css'; // Import the CSS file
+import './PatientRegister.css'; // Import the CSS file
 import SimpleNavbar from '../../components/SimpleNavbar'; // Import SimpleNavbar
 import SimpleFooter from '../../components/SimpleFooter'; // Import SimpleFooter
 
-const PatientLogin = () => {
+const PatientRegister = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
     try {
-      await login({ email, password }, 'patient');
-      navigate('/patients');
+      await authApi.register({ email, password, role: 'patient' });
+      navigate('/patient-login'); // Redirect to patient login after successful registration
     } catch (err) {
-      setError('Invalid credentials');
+      setError('Failed to register. Please try again.');
     }
   };
 
   return (
     <div className="auth-page-wrapper"> {/* New wrapper for full page layout */}
       <SimpleNavbar />
-      <div className="patient-login-container">
-        <div className="patient-login-card">
-          <h2>Patient Login</h2>
+      <div className="patient-register-container">
+        <div className="patient-register-card">
+          <h2>Patient Register</h2>
           <form onSubmit={handleSubmit}>
             {error && <p className="error-message">{error}</p>}
             <div className="form-group">
@@ -41,12 +45,16 @@ const PatientLogin = () => {
               <label>Password</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
-            <button type="submit" className="patient-login-button">
-              Login
+            <div className="form-group">
+              <label>Confirm Password</label>
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+            </div>
+            <button type="submit" className="patient-register-button">
+              Register
             </button>
           </form>
           <div className="link-text">
-            Don't have an account? <a href="/patient-register">Register here</a>
+            Already have an account? <a href="/patient-login">Login here</a>
           </div>
         </div>
       </div>
@@ -55,4 +63,4 @@ const PatientLogin = () => {
   );
 };
 
-export default PatientLogin;
+export default PatientRegister;
