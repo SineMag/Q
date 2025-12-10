@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { patientsApi, queueApi, aiApi } from "../services/api";
 import SuccessModal from "../components/SuccessModal";
@@ -51,6 +51,26 @@ export default function PatientCheckIn() {
   const [translatedNotes, setTranslatedNotes] = useState("");
   const [aiExplanation, setAiExplanation] = useState("");
 
+  useEffect(() => {
+    // Check if patient is already logged in
+    const patientData =
+      localStorage.getItem("patientData") ||
+      localStorage.getItem("patientInfo");
+    if (patientData) {
+      const patient = JSON.parse(patientData);
+      setPatientData({
+        first_name: patient.full_name?.split(" ")[0] || "",
+        last_name: patient.full_name?.split(" ")[1] || "",
+        date_of_birth: "",
+        phone_number: patient.phone_number || "",
+        email: patient.email || "",
+      });
+      // Skip to step 2 since patient already exists
+      setStep(2);
+      (window as any).tempPatientId = patient.id;
+    }
+  }, []);
+
   const handlePatientSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -77,7 +97,6 @@ export default function PatientCheckIn() {
     try {
       const patientId = (window as any).tempPatientId;
 
-      // Use AI to enhance notes if provided
       let enhancedNotes = queueData.notes;
       if (queueData.notes && translatedNotes) {
         enhancedNotes = `${queueData.notes}\n\n[AI Translation]: ${translatedNotes}`;
