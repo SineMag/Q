@@ -1,16 +1,16 @@
-import express from 'express';
-import { pool } from '../db/index.js';
+import express, { Request, Response } from "express";
+import { pool } from "../db/index.js";
 
 const router = express.Router();
 
 // CRUD but without Delete for staff members
 
 // Create new staff member
-router.post('/', async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const { name, role, is_available } = req.body;
     if (!name || !role) {
-      return res.status(400).json({ error: 'Name and role are required' });
+      return res.status(400).json({ error: "Name and role are required" });
     }
     const result = await pool.query(
       `INSERT INTO staff (name, role, is_available)
@@ -18,15 +18,15 @@ router.post('/', async (req, res) => {
         RETURNING *`,
       [name, role, is_available !== undefined ? is_available : true]
     );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error("Error creating staff member:", error);
+    res.status(500).json({ error: "Failed to create staff member" });
   }
-  catch (error) {
-    console.error('Error creating staff member:', error);
-    res.status(500).json({ error: 'Failed to create staff member' });
-  }});
+});
 
-  
 // Get all staff
-router.get('/', async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       `SELECT s.*, 
@@ -39,26 +39,26 @@ router.get('/', async (req, res) => {
     );
     res.json(result.rows);
   } catch (error) {
-    console.error('Error fetching staff:', error);
-    res.status(500).json({ error: 'Failed to fetch staff' });
+    console.error("Error fetching staff:", error);
+    res.status(500).json({ error: "Failed to fetch staff" });
   }
 });
 
 // Get available staff
-router.get('/available', async (req, res) => {
+router.get("/available", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM staff WHERE is_available = true ORDER BY name'
+      "SELECT * FROM staff WHERE is_available = true ORDER BY name"
     );
     res.json(result.rows);
   } catch (error) {
-    console.error('Error fetching available staff:', error);
-    res.status(500).json({ error: 'Failed to fetch available staff' });
+    console.error("Error fetching available staff:", error);
+    res.status(500).json({ error: "Failed to fetch available staff" });
   }
 });
 
 // Update staff availability
-router.put('/:id/availability', async (req, res) => {
+router.put("/:id/availability", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { is_available } = req.body;
@@ -74,15 +74,14 @@ router.put('/:id/availability', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Staff member not found' });
+      return res.status(404).json({ error: "Staff member not found" });
     }
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error updating staff availability:', error);
-    res.status(500).json({ error: 'Failed to update staff availability' });
+    console.error("Error updating staff availability:", error);
+    res.status(500).json({ error: "Failed to update staff availability" });
   }
 });
 
 export default router;
-
