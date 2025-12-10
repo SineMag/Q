@@ -42,13 +42,10 @@ export default function QueueView() {
     return () => clearInterval(interval);
   }, [filter]);
 
-  // Sort queue by priority: URGENT first, then by priority score
   const sortedQueue = [...queue].sort((a, b) => {
-    // URGENT patients always come first
     if (a.triage_level === "urgent" && b.triage_level !== "urgent") return -1;
     if (a.triage_level !== "urgent" && b.triage_level === "urgent") return 1;
 
-    // Then sort by priority score (highest first)
     return b.priority_score - a.priority_score;
   });
 

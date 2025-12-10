@@ -1,12 +1,10 @@
 import { pipeline } from "@huggingface/transformers";
 
-// Initialize Llama 3.2 pipeline for healthcare communication
 let llamaPipeline: any = null;
 
 async function initializeLlama() {
   if (!llamaPipeline) {
     try {
-      // Using a smaller model for demo purposes - in production, use Llama 3.2
       llamaPipeline = await pipeline(
         "text-generation",
         "meta-llama/Llama-2-7b-chat-hf",
@@ -17,7 +15,6 @@ async function initializeLlama() {
       );
     } catch (error) {
       console.error("Failed to initialize Llama model:", error);
-      // Fallback to mock responses for demo
       llamaPipeline = { isMock: true };
     }
   }
@@ -134,7 +131,6 @@ export class LlamaHealthcareService {
     }
   }
 
-  // Mock responses for demo when Llama model fails to load
   private static getMockTranslation(medicalText: string): string {
     const translations: { [key: string]: string } = {
       hypertension: "high blood pressure",
@@ -176,7 +172,6 @@ export class LlamaHealthcareService {
     }\n4. **Nutrition**: Follow dietary guidelines provided\n5. **Follow-up**: Attend all scheduled appointments\n6. **Emergency**: Know when to seek immediate care\n\nRemember, this plan is tailored to your needs as a ${patientAge}-year-old patient. We'll adjust it as needed based on your progress.`;
   }
 
-  // Clinical administrative burden reduction methods
   static async generateClinicalDocumentation(
     encounterData: any
   ): Promise<string> {
@@ -264,7 +259,6 @@ export class LlamaHealthcareService {
     }
   }
 
-  // Mock methods for clinical features
   private static getMockClinicalDocumentation(encounterData: any): string {
     return `CLINICAL DOCUMENTATION\n\nDATE: ${new Date().toLocaleDateString()}\nENCOUNTER TYPE: ${
       encounterData.encounterType

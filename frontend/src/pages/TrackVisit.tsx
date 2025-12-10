@@ -38,7 +38,7 @@ export default function TrackVisit() {
 
   useEffect(() => {
     fetchCurrentCheckIn();
-    const interval = setInterval(fetchCurrentCheckIn, 30000); // Update every 30 seconds
+    const interval = setInterval(fetchCurrentCheckIn, 30000);
 
     return () => clearInterval(interval);
   }, [patientCode]);

@@ -214,7 +214,6 @@
   transform: none;
 }
 
-/* Triage Level Styling */
 .form-group select {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -228,7 +227,6 @@
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a90e2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 
-/* Triage level specific colors */
 .form-group select.triage-immediate {
   border-color: #dc2626;
 }
@@ -245,7 +243,6 @@
   border-color: #16a34a;
 }
 
-/* Required field indicator */
 .form-group label::after {
   content: " *";
   color: #ef4444;
@@ -261,7 +258,6 @@
   font-weight: 700;
 }
 
-/* Animation */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -273,7 +269,6 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .patient-register {
     padding: 1rem;
@@ -334,7 +329,6 @@
   }
 }
 
-/* Focus states for accessibility */
 .form-group input:focus-visible,
 .form-group select:focus-visible,
 .form-group textarea:focus-visible {

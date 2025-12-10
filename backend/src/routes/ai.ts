@@ -3,7 +3,6 @@ import { LlamaHealthcareService } from "../services/llamaService.js";
 
 const router = express.Router();
 
-// Translate medical terminology to patient-friendly language
 router.post("/translate", async (req, res) => {
   try {
     const { medicalText, language = "english" } = req.body;
@@ -25,7 +24,6 @@ router.post("/translate", async (req, res) => {
   }
 });
 
-// Generate patient explanation for condition/treatment
 router.post("/explain", async (req, res) => {
   try {
     const { condition, treatment, nextSteps } = req.body;
@@ -49,7 +47,6 @@ router.post("/explain", async (req, res) => {
   }
 });
 
-// Simplify clinical notes for patients
 router.post("/simplify-notes", async (req, res) => {
   try {
     const { clinicalNotes } = req.body;
@@ -69,7 +66,6 @@ router.post("/simplify-notes", async (req, res) => {
   }
 });
 
-// Generate personalized care plan
 router.post("/care-plan", async (req, res) => {
   try {
     const { condition, patientAge, mobilityLevel } = req.body;

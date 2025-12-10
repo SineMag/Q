@@ -4,7 +4,6 @@ export async function initializeDatabase() {
   const client = await pool.connect();
 
   try {
-    // Create enum types
     await client.query(`
       DO $$ BEGIN
         CREATE TYPE triage_level AS ENUM ('immediate', 'urgent', 'semi_urgent', 'non_urgent');
@@ -29,7 +28,6 @@ export async function initializeDatabase() {
       END $$;
     `);
 
-    // Create users table
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -41,7 +39,6 @@ export async function initializeDatabase() {
       );
     `);
 
-    // Create staff table
     await client.query(`
       CREATE TABLE IF NOT EXISTS staff (
         id SERIAL PRIMARY KEY,
@@ -54,7 +51,6 @@ export async function initializeDatabase() {
       );
     `);
 
-    // Create patients table
     await client.query(`
       CREATE TABLE IF NOT EXISTS patients (
         id SERIAL PRIMARY KEY,
@@ -76,7 +72,6 @@ export async function initializeDatabase() {
       );
     `);
 
-    // Add missing columns to existing patients table
     await client.query(`
       DO $$
       BEGIN
@@ -115,7 +110,6 @@ export async function initializeDatabase() {
       END $$;
     `);
 
-    // Create queue table
     await client.query(`
       CREATE TABLE IF NOT EXISTS queue (
         id SERIAL PRIMARY KEY,
@@ -133,7 +127,6 @@ export async function initializeDatabase() {
       );
     `);
 
-    // Create clinical_encounters table for administrative burden reduction
     await client.query(`
       CREATE TABLE IF NOT EXISTS clinical_encounters (
         id SERIAL PRIMARY KEY,
@@ -151,7 +144,6 @@ export async function initializeDatabase() {
       );
     `);
 
-    // Create indexes
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_queue_status ON queue(status);
       CREATE INDEX IF NOT EXISTS idx_queue_triage ON queue(triage_level);
@@ -163,7 +155,6 @@ export async function initializeDatabase() {
       CREATE INDEX IF NOT EXISTS idx_clinical_encounters_date ON clinical_encounters(created_at);
     `);
 
-    // Insert default staff members if none exist..fake data for testing
     const staffCount = await client.query("SELECT COUNT(*) FROM staff");
     if (parseInt(staffCount.rows[0].count) === 0) {
       await client.query(`

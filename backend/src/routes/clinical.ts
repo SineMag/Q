@@ -4,7 +4,6 @@ import { pool } from "../db/index.js";
 
 const router = express.Router();
 
-// AI-powered clinical documentation assistant
 router.post("/document-encounter", async (req, res) => {
   try {
     const {
@@ -19,14 +18,11 @@ router.post("/document-encounter", async (req, res) => {
     } = req.body;
 
     if (!patientId || !staffId || !encounterType) {
-      return res
-        .status(400)
-        .json({
-          error: "Patient ID, Staff ID, and encounter type are required",
-        });
+      return res.status(400).json({
+        error: "Patient ID, Staff ID, and encounter type are required",
+      });
     }
 
-    // Generate structured clinical documentation using AI
     const structuredNotes =
       await LlamaHealthcareService.generateClinicalDocumentation({
         encounterType,
@@ -37,7 +33,6 @@ router.post("/document-encounter", async (req, res) => {
         notes,
       });
 
-    // Save the encounter to database
     const result = await pool.query(
       `
       INSERT INTO clinical_encounters 
@@ -68,7 +63,6 @@ router.post("/document-encounter", async (req, res) => {
   }
 });
 
-// AI-powered discharge summary generator
 router.post("/generate-discharge-summary", async (req, res) => {
   try {
     const { patientId, encounterIds } = req.body;
@@ -77,7 +71,6 @@ router.post("/generate-discharge-summary", async (req, res) => {
       return res.status(400).json({ error: "Patient ID is required" });
     }
 
-    // Fetch patient encounters
     const encountersResult = await pool.query(
       `
       SELECT * FROM clinical_encounters 
@@ -88,7 +81,6 @@ router.post("/generate-discharge-summary", async (req, res) => {
       [patientId]
     );
 
-    // Generate discharge summary using AI
     const dischargeSummary =
       await LlamaHealthcareService.generateDischargeSummary(
         encountersResult.rows
@@ -101,7 +93,6 @@ router.post("/generate-discharge-summary", async (req, res) => {
   }
 });
 
-// AI-powered prescription instructions simplifier
 router.post("/simplify-prescription", async (req, res) => {
   try {
     const { prescription, patientAge, patientLiteracy } = req.body;
@@ -126,7 +117,6 @@ router.post("/simplify-prescription", async (req, res) => {
   }
 });
 
-// Get clinical encounters for a patient
 router.get("/encounters/:patientId", async (req, res) => {
   try {
     const { patientId } = req.params;
@@ -149,7 +139,6 @@ router.get("/encounters/:patientId", async (req, res) => {
   }
 });
 
-// Get staff workload and administrative burden metrics
 router.get("/staff-workload/:staffId", async (req, res) => {
   try {
     const { staffId } = req.params;

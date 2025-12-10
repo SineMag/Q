@@ -17,16 +17,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok", message: "Q Healthcare API is running" });
 });
 
-// Routes
 app.use("/api/patients", patientRoutes);
 app.use("/api/queue", queueRoutes);
 app.use("/api/staff", staffRoutes);
@@ -34,23 +31,18 @@ app.use("/api/auth", authRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/clinical", clinicalRoutes);
 
-// Create HTTP server
 const server = createServer(app);
 
-// WebSocket server for real-time updates
 const wss = new WebSocketServer({ server });
 
-// Broadcast function to send updates to all connected clients
 export const broadcastUpdate = (data: any) => {
   wss.clients.forEach((client) => {
     if (client.readyState === 1) {
-      // WebSocket.OPEN
       client.send(JSON.stringify(data));
     }
   });
 };
 
-// Initialize database and start server
 initializeDatabase()
   .then(() => {
     server.listen(PORT, () => {

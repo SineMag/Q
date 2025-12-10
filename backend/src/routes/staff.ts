@@ -3,9 +3,6 @@ import { pool } from "../db/index.js";
 
 const router = express.Router();
 
-// CRUD but without Delete for staff members
-
-// Create new staff member
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { name, role, is_available } = req.body;
@@ -25,7 +22,6 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-// Get all staff
 router.get("/", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
@@ -44,7 +40,6 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// Get available staff
 router.get("/available", async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
@@ -57,7 +52,6 @@ router.get("/available", async (req: Request, res: Response) => {
   }
 });
 
-// Update staff availability
 router.put("/:id/availability", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

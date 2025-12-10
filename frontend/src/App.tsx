@@ -20,7 +20,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Auth routes */}
         <Route
           path="/"
           element={
@@ -62,7 +61,6 @@ function App() {
           }
         />
 
-        {/* App routes */}
         <Route
           path="/patients"
           element={

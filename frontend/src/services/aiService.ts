@@ -3,7 +3,6 @@ import axios from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 export const aiApi = {
-  // Translate medical terminology to patient-friendly language
   translateMedicalText: async (
     medicalText: string,
     language: string = "english"
@@ -15,7 +14,6 @@ export const aiApi = {
     return response.data;
   },
 
-  // Generate patient explanation for condition/treatment
   generateExplanation: async (
     condition: string,
     treatment: string,
@@ -29,7 +27,6 @@ export const aiApi = {
     return response.data;
   },
 
-  // Simplify clinical notes for patients
   simplifyClinicalNotes: async (clinicalNotes: string) => {
     const response = await axios.post(`${API_BASE_URL}/api/ai/simplify-notes`, {
       clinicalNotes,
@@ -37,7 +34,6 @@ export const aiApi = {
     return response.data;
   },
 
-  // Generate personalized care plan
   generateCarePlan: async (
     condition: string,
     patientAge: string,

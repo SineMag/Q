@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 
 const router = express.Router();
 
-// Helper function to generate patient ID
 function generatePatientId(): string {
   const prefix = "QH";
   const timestamp = Date.now().toString().slice(-6);
@@ -14,9 +13,6 @@ function generatePatientId(): string {
   return `${prefix}${timestamp}${random}`;
 }
 
-// CRUD operations for patients..
-
-// Register new patient
 router.post("/register", async (req, res) => {
   try {
     const { full_name, national_id, password, email, phone_number } = req.body;
@@ -27,28 +23,22 @@ router.post("/register", async (req, res) => {
         .json({ error: "All required fields must be provided" });
     }
 
-    // Check if patient already exists
     const existingPatient = await pool.query(
       "SELECT id FROM patients WHERE email = $1 OR national_id = $2",
       [email, national_id]
     );
 
     if (existingPatient.rows.length > 0) {
-      return res
-        .status(400)
-        .json({
-          error: "Patient with this email or national ID already exists",
-        });
+      return res.status(400).json({
+        error: "Patient with this email or national ID already exists",
+      });
     }
 
-    // Hash password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Generate patient ID
     const patient_id = generatePatientId();
 
-    // Insert new patient
     const result = await pool.query(
       `INSERT INTO patients (full_name, national_id, password, email, phone_number, patient_id, profile_complete, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, false, CURRENT_TIMESTAMP)
@@ -66,7 +56,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// Update patient profile
 router.put("/:id/profile", async (req, res) => {
   try {
     const { id } = req.params;
@@ -100,7 +89,6 @@ router.put("/:id/profile", async (req, res) => {
   }
 });
 
-// Get all patients
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
@@ -113,7 +101,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get patient by ID
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -132,7 +119,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Create new patient
 router.post("/", async (req, res) => {
   try {
     const { first_name, last_name, date_of_birth, phone_number, email } =
@@ -164,7 +150,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update patient
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -195,7 +180,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete patient
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

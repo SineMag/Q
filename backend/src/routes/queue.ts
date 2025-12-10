@@ -4,7 +4,6 @@ import { broadcastUpdate } from "../index.js";
 
 const router = express.Router();
 
-// Calculate priority score based on triage level and wait time
 function calculatePriorityScore(
   triageLevel: string,
   waitMinutes: number
@@ -17,12 +16,10 @@ function calculatePriorityScore(
   };
 
   const baseScore = triageWeights[triageLevel] || 0;
-  const waitBonus = Math.min(waitMinutes * 2, 200); // Max 200 for waiting
 
   return baseScore + waitBonus;
 }
 
-// Get queue with patient and staff info
 router.get("/", async (req: Request, res: Response) => {
   try {
     const { status } = req.query;
@@ -57,7 +54,6 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// Get queue statistics
 router.get("/stats", async (req: Request, res: Response) => {
   try {
     const stats = await pool.query(`
@@ -79,7 +75,6 @@ router.get("/stats", async (req: Request, res: Response) => {
   }
 });
 
-// Add patient to queue (check-in patient)
 router.post("/check-in", async (req: Request, res: Response) => {
   try {
     const { patient_id, triage_level, notes } = req.body;
@@ -90,13 +85,12 @@ router.post("/check-in", async (req: Request, res: Response) => {
         .json({ error: "Patient ID and triage level are required" });
     }
 
-    // Calculate estimated wait time (simplified .... in some apps, this would use AI/google)
     const waitingCount = await pool.query(
       "SELECT COUNT(*) FROM queue WHERE status = $1",
       ["waiting"]
     );
     const waitCount = parseInt(waitingCount.rows[0].count);
-    const estimatedWait = Math.max(5, waitCount * 10); // Simple estimation
+    const estimatedWait = Math.max(5, waitCount * 10);
 
     const priorityScore = calculatePriorityScore(triage_level, 0);
 
@@ -107,7 +101,6 @@ router.post("/check-in", async (req: Request, res: Response) => {
       [patient_id, triage_level, notes || null, estimatedWait, priorityScore]
     );
 
-    // Get full queue entry with patient info
     const fullEntry = await pool.query(
       `SELECT 
         q.*,
@@ -121,7 +114,6 @@ router.post("/check-in", async (req: Request, res: Response) => {
       [result.rows[0].id]
     );
 
-    // Broadcast update
     broadcastUpdate({ type: "queue_updated", data: fullEntry.rows[0] });
 
     res.status(201).json(fullEntry.rows[0]);
@@ -131,14 +123,12 @@ router.post("/check-in", async (req: Request, res: Response) => {
   }
 });
 
-// Update queue entry
 router.put("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status, staff_id, triage_level, notes, estimated_wait_minutes } =
       req.body;
 
-    // Get current entry
     const current = await pool.query("SELECT * FROM queue WHERE id = $1", [id]);
     if (current.rows.length === 0) {
       return res.status(404).json({ error: "Queue entry not found" });
@@ -147,7 +137,6 @@ router.put("/:id", async (req: Request, res: Response) => {
     const currentEntry = current.rows[0];
     let actualWaitMinutes = currentEntry.actual_wait_minutes;
 
-    // Calculate actual wait time if status changed to in_progress
     if (status === "in_progress" && currentEntry.status === "waiting") {
       const checkInTime = new Date(currentEntry.check_in_time);
       const now = new Date();
@@ -156,7 +145,6 @@ router.put("/:id", async (req: Request, res: Response) => {
       );
     }
 
-    // Recalculate priority if triage level changed
     let priorityScore = currentEntry.priority_score;
     if (triage_level && triage_level !== currentEntry.triage_level) {
       const waitTime = actualWaitMinutes || 0;
@@ -187,7 +175,6 @@ router.put("/:id", async (req: Request, res: Response) => {
       ]
     );
 
-    // Update staff availability
     if (staff_id) {
       await pool.query(
         "UPDATE staff SET current_patient_id = $1, is_available = false WHERE id = $2",
@@ -195,7 +182,6 @@ router.put("/:id", async (req: Request, res: Response) => {
       );
     }
 
-    // Get full entry with patient info
     const fullEntry = await pool.query(
       `SELECT 
         q.*,
@@ -212,9 +198,6 @@ router.put("/:id", async (req: Request, res: Response) => {
       [id]
     );
 
-    // Broadcast update
-    broadcastUpdate({ type: "queue_updated", data: fullEntry.rows[0] });
-
     res.json(fullEntry.rows[0]);
   } catch (error) {
     console.error("Error updating queue:", error);
@@ -222,7 +205,6 @@ router.put("/:id", async (req: Request, res: Response) => {
   }
 });
 
-// Complete queue entry
 router.post("/:id/complete", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -240,7 +222,6 @@ router.post("/:id/complete", async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Queue entry not found" });
     }
 
-    // Free up staff member
     const queueEntry = result.rows[0];
     if (queueEntry.staff_id) {
       await pool.query(
@@ -249,7 +230,6 @@ router.post("/:id/complete", async (req: Request, res: Response) => {
       );
     }
 
-    // Broadcast update
     broadcastUpdate({ type: "queue_completed", data: result.rows[0] });
 
     res.json(result.rows[0]);
@@ -259,7 +239,6 @@ router.post("/:id/complete", async (req: Request, res: Response) => {
   }
 });
 
-// Get patient's queue status
 router.get("/patient/:patientId", async (req: Request, res: Response) => {
   try {
     const { patientId } = req.params;

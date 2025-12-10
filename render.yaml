@@ -1,5 +1,4 @@
 services:
-  # Backend Service
   - type: web
     name: q-backend
     runtime: node
@@ -23,7 +22,6 @@ services:
       - key: CORS_ORIGIN
         value: https://q-frontend-zsbb.onrender.com
 
-  # Frontend Service
   - type: web
     name: q-frontend
     runtime: node
