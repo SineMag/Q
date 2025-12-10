@@ -16,6 +16,10 @@ services:
         value: 10000
       - key: NODE_ENV
         value: production
+      - key: DATABASE_URL
+        value: postgresql://postgres:password@dpg-d4sidjumcj7s73c11je0-a.oregon.postgres.render.com:5432/q_healthcare
+      - key: CORS_ORIGIN
+        value: https://qfrontend-u1k9.onrender.com
 
   # Frontend Service
   - type: web
@@ -25,8 +29,8 @@ services:
     region: oregon
     plan: free
     rootDir: frontend
-    buildCommand: npm install && npm run build
-    startCommand: npm run preview
+    buildCommand: npm install && npx vite build
+    startCommand: npx vite preview --port 10000 --host
     nodeVersion: 18
     envVars:
       - key: VITE_API_URL
