@@ -17,4 +17,9 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: true,
   },
+  preview: {
+    port: 10000,
+    host: true,
+    allowedHosts: ["qfrontend-u1k9.onrender.com"],
+  },
 });
