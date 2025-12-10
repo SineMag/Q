@@ -110,55 +110,17 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
             <nav className="nav">
               <div className="nav-links">
-                {user ? (
+                {user || isPatientLoggedIn ? (
                   <>
-                    {user?.role === "admin" && (
+                    {user ? (
                       <>
-                        <Link
-                          to="/dashboard"
-                          className={isActive("/dashboard") ? "active" : ""}
-                        >
-                          Dashboard
-                        </Link>
-                        <Link
-                          to="/patients"
-                          className={isActive("/patients") ? "active" : ""}
-                        >
-                          Patients
-                        </Link>
-                        <Link
-                          to="/admin/patient-management"
-                          className={
-                            isActive("/admin/patient-management")
-                              ? "active"
-                              : ""
-                          }
-                        >
-                          Patient Records
-                        </Link>
-                        <Link
-                          to="/queue"
-                          className={isActive("/queue") ? "active" : ""}
-                        >
-                          Queue
-                        </Link>
-                        <Link
-                          to="/check-in"
-                          className={isActive("/check-in") ? "active" : ""}
-                        >
-                          Check In
-                        </Link>
-                      </>
-                    )}
-                    {(user || isPatientLoggedIn) && (
-                      <>
-                        {user ? (
+                        {user?.role === "admin" && (
                           <>
                             <Link
-                              to="/"
-                              className={isActive("/") ? "active" : ""}
+                              to="/dashboard"
+                              className={isActive("/dashboard") ? "active" : ""}
                             >
-                              Home
+                              Dashboard
                             </Link>
                             <Link
                               to="/patients"
@@ -167,21 +129,20 @@ export default function Layout({ children }: LayoutProps) {
                               Patients
                             </Link>
                             <Link
-                              to="/check-in"
-                              className={isActive("/check-in") ? "active" : ""}
-                            >
-                              Check In
-                            </Link>
-                          </>
-                        ) : (
-                          <>
-                            <Link
-                              to="/patient-dashboard"
+                              to="/admin/patient-management"
                               className={
-                                isActive("/patient-dashboard") ? "active" : ""
+                                isActive("/admin/patient-management")
+                                  ? "active"
+                                  : ""
                               }
                             >
-                              Dashboard
+                              Patient Records
+                            </Link>
+                            <Link
+                              to="/queue"
+                              className={isActive("/queue") ? "active" : ""}
+                            >
+                              Queue
                             </Link>
                             <Link
                               to="/check-in"
@@ -191,11 +152,28 @@ export default function Layout({ children }: LayoutProps) {
                             </Link>
                           </>
                         )}
-                        <button onClick={logout} className="logout-button">
-                          Logout
-                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          to="/patient-dashboard"
+                          className={
+                            isActive("/patient-dashboard") ? "active" : ""
+                          }
+                        >
+                          Dashboard
+                        </Link>
+                        <Link
+                          to="/check-in"
+                          className={isActive("/check-in") ? "active" : ""}
+                        >
+                          Check In
+                        </Link>
                       </>
                     )}
+                    <button onClick={logout} className="logout-button">
+                      Logout
+                    </button>
                   </>
                 ) : (
                   !isLandingPage && (

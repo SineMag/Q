@@ -76,7 +76,14 @@ export default function PatientDashboard() {
     e.preventDefault();
 
     try {
-      await patientsApi.updateProfile(patientProfile!.id, profileData);
+      // Use the correct patient ID from profile
+      const patientId = patientProfile?.id;
+      if (!patientId) {
+        setError("Patient ID not found");
+        return;
+      }
+
+      await patientsApi.updateProfile(patientId, profileData);
 
       const updatedProfile = {
         ...patientProfile!,
@@ -86,6 +93,7 @@ export default function PatientDashboard() {
 
       setPatientProfile(updatedProfile);
       localStorage.setItem("patientInfo", JSON.stringify(updatedProfile));
+      localStorage.setItem("patientData", JSON.stringify(updatedProfile));
       setShowProfileModal(false);
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to update profile");
