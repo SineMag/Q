@@ -35,8 +35,8 @@ export default function PatientCheckIn() {
   const [patientInfo, setPatientInfo] = useState<any>(null);
 
   const [patientData, setPatientData] = useState({
-    first_name: "",
-    last_name: "",
+    full_name: "",
+    national_id: "",
     date_of_birth: "",
     phone_number: "",
     email: "",
@@ -59,8 +59,8 @@ export default function PatientCheckIn() {
     if (patientData) {
       const patient = JSON.parse(patientData);
       setPatientData({
-        first_name: patient.full_name?.split(" ")[0] || "",
-        last_name: patient.full_name?.split(" ")[1] || "",
+        full_name: patient.full_name || "",
+        national_id: patient.national_id || "",
         date_of_birth: "",
         phone_number: patient.phone_number || "",
         email: patient.email || "",
@@ -209,29 +209,29 @@ export default function PatientCheckIn() {
       {step === 1 && (
         <form onSubmit={handlePatientSubmit} className="check-in-form">
           <div className="form-group">
-            <label htmlFor="first_name">First Name *</label>
+            <label htmlFor="full_name">Full Name *</label>
             <input
               type="text"
-              id="first_name"
+              id="full_name"
               className="input"
               required
-              value={patientData.first_name}
+              value={patientData.full_name}
               onChange={(e) =>
-                setPatientData({ ...patientData, first_name: e.target.value })
+                setPatientData({ ...patientData, full_name: e.target.value })
               }
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="last_name">Last Name *</label>
+            <label htmlFor="national_id">National ID *</label>
             <input
               type="text"
-              id="last_name"
+              id="national_id"
               className="input"
               required
-              value={patientData.last_name}
+              value={patientData.national_id}
               onChange={(e) =>
-                setPatientData({ ...patientData, last_name: e.target.value })
+                setPatientData({ ...patientData, national_id: e.target.value })
               }
             />
           </div>
