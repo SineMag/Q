@@ -76,31 +76,25 @@ function App() {
         <Route
           path="/admin/patient-management"
           element={
-            <ProtectedRoute allowedRoles={["admin"]}>
-              <Layout>
-                <AdminPatientManagement />
-              </Layout>
-            </ProtectedRoute>
+            <Layout>
+              <AdminPatientManagement />
+            </Layout>
           }
         />
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute allowedRoles={["admin"]}>
-              <Layout>
-                <Dashboard />
-              </Layout>
-            </ProtectedRoute>
+            <Layout>
+              <Dashboard />
+            </Layout>
           }
         />
         <Route
           path="/patient-dashboard"
           element={
-            <ProtectedRoute allowedRoles={["patient"]}>
-              <Layout>
-                <PatientDashboard />
-              </Layout>
-            </ProtectedRoute>
+            <Layout>
+              <PatientDashboard />
+            </Layout>
           }
         />
         <Route
@@ -126,11 +120,9 @@ function App() {
         <Route
           path="/queue"
           element={
-            <ProtectedRoute allowedRoles={["admin"]}>
-              <Layout>
-                <QueueView />
-              </Layout>
-            </ProtectedRoute>
+            <Layout>
+              <QueueView />
+            </Layout>
           }
         />
         <Route

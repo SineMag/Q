@@ -213,7 +213,7 @@ export default function PatientRegistration() {
         </form>
 
         <div className="login-link">
-          Already have an account? <a href="/login">Sign in</a>
+          Already have an account? <a href="/patient-login">Sign in</a>
         </div>
       </div>
     </div>
