@@ -26,13 +26,13 @@ services:
   # Frontend Service
   - type: web
     name: q-frontend
-    runtime: static
+    runtime: node
     repo: https://github.com/SineMag/Q
     region: oregon
     plan: free
     rootDir: frontend
-    buildCommand: chmod +x build.sh && ./build.sh
-    publishPath: dist
+    buildCommand: npm install --production=false && npx vite build
+    startCommand: npx vite preview --port 10000 --host
     nodeVersion: 18
     envVars:
       - key: VITE_API_URL
