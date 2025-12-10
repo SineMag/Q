@@ -1,0 +1,38 @@
+services:
+  # Backend Service
+  - type: web
+    name: q-backend
+    runtime: node
+    repo: https://github.com/SineMag/Q
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    nodeVersion: 18
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+
+  # Frontend Service
+  - type: web
+    name: q-frontend
+    runtime: node
+    repo: https://github.com/SineMag/Q
+    region: oregon
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm run preview
+    nodeVersion: 18
+    envVars:
+      - key: VITE_API_URL
+        value: https://q-backend-zsbb.onrender.com
+
+databases:
+  - name: q-db
+    databaseName: q_healthcare
+    plan: free
