@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaUser, FaHome, FaCreditCard } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { patientsApi, queueApi } from "../services/api";
 import "./PatientDashboard.css";
 
@@ -26,6 +27,7 @@ interface CheckIn {
 }
 
 export default function PatientDashboard() {
+  const navigate = useNavigate();
   const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(
     null
   );
@@ -45,7 +47,9 @@ export default function PatientDashboard() {
 
   const loadPatientData = async () => {
     try {
-      const storedInfo = localStorage.getItem("patientInfo");
+      const storedInfo =
+        localStorage.getItem("patientInfo") ||
+        localStorage.getItem("patientData");
       if (storedInfo) {
         const info = JSON.parse(storedInfo);
         setPatientProfile(info);
@@ -207,7 +211,7 @@ export default function PatientDashboard() {
             <p>No recent check-ins</p>
             <button
               className="btn btn-primary"
-              onClick={() => (window.location.href = "/check-in")}
+              onClick={() => navigate("/check-in")}
             >
               Check In Now
             </button>
