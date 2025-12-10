@@ -36,8 +36,16 @@
     "typescript": "^5.9.3"
   },
   "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "main": "dist/index.js",
+  "keywords": [
+    "healthcare",
+    "api",
+    "queue",
+    "management"
+  ],
+  "author": "Q Healthcare Team",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

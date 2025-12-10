@@ -117,10 +117,6 @@ export default function Dashboard() {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState(10);
   const [hasManualPatients, setHasManualPatients] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [celebrationPatient, setCelebrationPatient] = useState<Patient | null>(
-    null
-  );
 
   useEffect(() => {
     loadDashboardData();
@@ -480,14 +476,7 @@ export default function Dashboard() {
   };
 
   const triggerCelebration = (patient: Patient) => {
-    setCelebrationPatient(patient);
-    setShowCelebration(true);
-
-    // Auto-hide celebration after 5 seconds
-    setTimeout(() => {
-      setShowCelebration(false);
-      setCelebrationPatient(null);
-    }, 5000);
+    console.log("Celebration triggered for patient:", patient.name);
   };
 
   const handlePatientAction = async (action: string, patient: Patient) => {

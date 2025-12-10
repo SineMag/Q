@@ -76,6 +76,45 @@ export async function initializeDatabase() {
       );
     `);
 
+    // Add missing columns to existing patients table
+    await client.query(`
+      DO $$
+      BEGIN
+        -- Add new columns if they don't exist
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'full_name') THEN
+          ALTER TABLE patients ADD COLUMN full_name VARCHAR(200);
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'national_id') THEN
+          ALTER TABLE patients ADD COLUMN national_id VARCHAR(50) UNIQUE;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'password') THEN
+          ALTER TABLE patients ADD COLUMN password VARCHAR(255);
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'address') THEN
+          ALTER TABLE patients ADD COLUMN address TEXT;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'medical_aid') THEN
+          ALTER TABLE patients ADD COLUMN medical_aid VARCHAR(100);
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'payment_method') THEN
+          ALTER TABLE patients ADD COLUMN payment_method VARCHAR(20) DEFAULT 'cash';
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'patient_id') THEN
+          ALTER TABLE patients ADD COLUMN patient_id VARCHAR(20) UNIQUE;
+        END IF;
+        
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'profile_complete') THEN
+          ALTER TABLE patients ADD COLUMN profile_complete BOOLEAN DEFAULT false;
+        END IF;
+      END $$;
+    `);
+
     // Create queue table
     await client.query(`
       CREATE TABLE IF NOT EXISTS queue (
