@@ -194,17 +194,14 @@ export default function PatientDashboard() {
 
       {/* Quick Actions */}
       <div className="quick-actions">
-        <button
-          className="action-card"
-          onClick={() => (window.location.href = "/check-in")}
-        >
+        <button className="action-card" onClick={() => navigate("/check-in")}>
           <h3>Check In</h3>
           <p>Start a new visit</p>
         </button>
 
         <button
           className="action-card"
-          onClick={() => (window.location.href = "/healthcare-communication")}
+          onClick={() => navigate("/healthcare-communication")}
         >
           <h3>AI Assistant</h3>
           <p>Get medical help</p>
