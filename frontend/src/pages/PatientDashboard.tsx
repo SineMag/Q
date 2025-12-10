@@ -194,7 +194,13 @@ export default function PatientDashboard() {
 
       {/* Quick Actions */}
       <div className="quick-actions">
-        <button className="action-card" onClick={() => navigate("/check-in")}>
+        <button
+          className="action-card"
+          onClick={() => {
+            console.log("Check-in button clicked");
+            navigate("/check-in");
+          }}
+        >
           <h3>Check In</h3>
           <p>Start a new visit</p>
         </button>
@@ -216,7 +222,10 @@ export default function PatientDashboard() {
             <p>No recent check-ins</p>
             <button
               className="btn btn-primary"
-              onClick={() => navigate("/check-in")}
+              onClick={() => {
+                console.log("Check In Now button clicked");
+                navigate("/check-in");
+              }}
             >
               Check In Now
             </button>

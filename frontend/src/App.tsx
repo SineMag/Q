@@ -110,11 +110,9 @@ function App() {
         <Route
           path="/check-in"
           element={
-            <ProtectedRoute allowedRoles={["admin", "patient"]}>
-              <Layout>
-                <PatientCheckIn />
-              </Layout>
-            </ProtectedRoute>
+            <Layout>
+              <PatientCheckIn />
+            </Layout>
           }
         />
         <Route
