@@ -76,6 +76,15 @@ export default function PatientRegistration() {
   };
 
   const handleGoToDashboard = () => {
+    // Store patient data for dashboard
+    localStorage.setItem(
+      "patientData",
+      JSON.stringify({
+        patient_id: patientId,
+        full_name: formData.full_name,
+        email: formData.email,
+      })
+    );
     navigate("/patient-dashboard");
   };
 
