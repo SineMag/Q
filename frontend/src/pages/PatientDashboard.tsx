@@ -1,8 +1,19 @@
 import { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
-import { queueApi } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { FaUser, FaHome, FaCreditCard } from "react-icons/fa";
+import { patientsApi, queueApi } from "../services/api";
 import "./PatientDashboard.css";
+
+interface PatientProfile {
+  id: number;
+  patient_id: string;
+  full_name: string;
+  email: string;
+  phone_number?: string;
+  address?: string;
+  medical_aid?: string;
+  payment_method?: string;
+  profile_complete: boolean;
+}
 
 interface CheckIn {
   id: number;
@@ -12,165 +23,188 @@ interface CheckIn {
   check_in_time: string;
   estimated_wait_minutes?: number;
   notes?: string;
-  patient: {
-    first_name: string;
-    last_name: string;
-    phone_number?: string;
-  };
 }
 
 export default function PatientDashboard() {
+  const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(
+    null
+  );
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [editingCheckIn, setEditingCheckIn] = useState<CheckIn | null>(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [deleteCheckIn, setDeleteCheckIn] = useState<CheckIn | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [snackbar, setSnackbar] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
-  const { user } = useAuth();
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileData, setProfileData] = useState({
+    address: "",
+    medical_aid: "",
+    payment_method: "cash",
+  });
 
   useEffect(() => {
-    fetchPatientCheckIns();
-  }, [user]);
+    loadPatientData();
+  }, []);
 
-  const fetchPatientCheckIns = async () => {
+  const loadPatientData = async () => {
     try {
+      const storedInfo = localStorage.getItem("patientInfo");
+      if (storedInfo) {
+        const info = JSON.parse(storedInfo);
+        setPatientProfile(info);
+
+        if (!info.profile_complete) {
+          setShowProfileModal(true);
+        }
+      }
+
+      // Load check-ins if patient is logged in
       const response = await queueApi.getAll();
       const patientCheckIns = response.data.filter(
-        (checkIn: any) => checkIn.patient_id === user?.id
+        (checkIn: any) => checkIn.patient_id === patientProfile?.id
       );
       setCheckIns(patientCheckIns);
     } catch (err) {
-      setError("Failed to fetch check-ins");
+      setError("Failed to load patient data");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (checkIn: CheckIn) => {
-    setEditingCheckIn(checkIn);
-    setShowEditModal(true);
-  };
-
-  const handleDelete = async (checkIn: CheckIn) => {
-    setDeleteCheckIn(checkIn);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteCheckIn) return;
+  const handleProfileComplete = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     try {
-      console.log("Attempting to delete check-in:", deleteCheckIn.id);
-      const response = await queueApi.delete(deleteCheckIn.id);
-      console.log("Delete response:", response);
+      await patientsApi.updateProfile(patientProfile!.id, profileData);
 
-      // Remove the deleted item from the list
-      const updatedCheckIns = checkIns.filter(
-        (ci) => ci.id !== deleteCheckIn.id
-      );
-      console.log("Updated check-ins list:", updatedCheckIns);
-      setCheckIns(updatedCheckIns);
+      const updatedProfile = {
+        ...patientProfile!,
+        ...profileData,
+        profile_complete: true,
+      };
 
-      setSnackbar({
-        message: "Check-in deleted successfully",
-        type: "success",
-      });
+      setPatientProfile(updatedProfile);
+      localStorage.setItem("patientInfo", JSON.stringify(updatedProfile));
+      setShowProfileModal(false);
     } catch (err: any) {
-      console.error("Delete error:", err);
-      console.error("Error response:", err.response);
-
-      // Handle 404 (endpoint not found) - remove from UI anyway
-      if (err.response?.status === 404) {
-        const updatedCheckIns = checkIns.filter(
-          (ci) => ci.id !== deleteCheckIn.id
-        );
-        setCheckIns(updatedCheckIns);
-        setSnackbar({
-          message: "Check-in removed from list",
-          type: "success",
-        });
-      }
-      // Handle network errors
-      else if (err.code === "ERR_NETWORK" || err.response?.status >= 500) {
-        const updatedCheckIns = checkIns.filter(
-          (ci) => ci.id !== deleteCheckIn.id
-        );
-        setCheckIns(updatedCheckIns);
-        setSnackbar({
-          message: "Check-in removed from list (server unavailable)",
-          type: "success",
-        });
-      }
-      // Handle other errors
-      else {
-        const errorMessage =
-          err.response?.data?.error ||
-          err.message ||
-          "Failed to delete check-in";
-        setSnackbar({ message: errorMessage, type: "error" });
-      }
-    } finally {
-      setShowDeleteModal(false);
-      setDeleteCheckIn(null);
+      setError(err.response?.data?.error || "Failed to update profile");
     }
   };
 
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-    setDeleteCheckIn(null);
+  const calculateProfileCompletion = () => {
+    if (!patientProfile) return 0;
+
+    let completed = 0;
+    const total = 4; // name, email, phone, profile info
+
+    if (patientProfile.full_name) completed++;
+    if (patientProfile.email) completed++;
+    if (patientProfile.phone_number) completed++;
+    if (patientProfile.profile_complete) completed++;
+
+    return (completed / total) * 100;
   };
 
-  const hideSnackbar = () => {
-    setSnackbar(null);
-  };
+  const completionPercentage = calculateProfileCompletion();
 
-  useEffect(() => {
-    if (snackbar) {
-      const timer = setTimeout(() => {
-        setSnackbar(null);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [snackbar]);
-
-  const handleUpdate = async (updatedData: any) => {
-    if (!editingCheckIn) return;
-
-    try {
-      await queueApi.update(editingCheckIn.id, updatedData);
-      setCheckIns(
-        checkIns.map((ci) =>
-          ci.id === editingCheckIn.id ? { ...ci, ...updatedData } : ci
-        )
-      );
-      setShowEditModal(false);
-      setEditingCheckIn(null);
-    } catch (err) {
-      setError("Failed to update check-in");
-    }
-  };
-
-  if (loading) return <div className="loading">Loading your check-ins...</div>;
+  if (loading) return <div className="loading">Loading your dashboard...</div>;
 
   return (
     <div className="patient-dashboard">
+      {/* Patient ID Alert */}
+      {patientProfile && !patientProfile.profile_complete && (
+        <div className="patient-id-alert">
+          <div className="alert-content">
+            <div className="patient-id-display">
+              <h3>Your Patient ID: {patientProfile.patient_id}</h3>
+              <p>Please complete your profile to access all features</p>
+            </div>
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowProfileModal(true)}
+            >
+              Complete Profile
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="dashboard-header">
-        <h1>My Check-Ins</h1>
-        <p>View and manage your healthcare check-ins</p>
+        <h1>Welcome, {patientProfile?.full_name || "Patient"}</h1>
+        <p>Manage your healthcare journey</p>
       </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="check-ins-container">
+      {/* Profile Completion Card */}
+      <div className="profile-completion-card">
+        <h2>Profile Completion</h2>
+        <div className="completion-progress">
+          <div className="progress-bar">
+            <div
+              className={`progress-fill progress-${Math.round(
+                completionPercentage
+              )}`}
+            />
+          </div>
+          <span className="progress-text">
+            {Math.round(completionPercentage)}% Complete
+          </span>
+        </div>
+        <div className="completion-items">
+          <div
+            className={`completion-item ${
+              patientProfile?.full_name ? "completed" : ""
+            }`}
+          >
+            <FaUser /> Basic Information
+          </div>
+          <div
+            className={`completion-item ${
+              patientProfile?.email ? "completed" : ""
+            }`}
+          >
+            <FaUser /> Contact Details
+          </div>
+          <div
+            className={`completion-item ${
+              patientProfile?.profile_complete ? "completed" : ""
+            }`}
+          >
+            <FaHome /> Address Information
+          </div>
+          <div
+            className={`completion-item ${
+              patientProfile?.profile_complete ? "completed" : ""
+            }`}
+          >
+            <FaCreditCard /> Payment Method
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="quick-actions">
+        <button
+          className="action-card"
+          onClick={() => (window.location.href = "/check-in")}
+        >
+          <h3>Check In</h3>
+          <p>Start a new visit</p>
+        </button>
+
+        <button
+          className="action-card"
+          onClick={() => (window.location.href = "/healthcare-communication")}
+        >
+          <h3>AI Assistant</h3>
+          <p>Get medical help</p>
+        </button>
+      </div>
+
+      {/* Recent Check-ins */}
+      <div className="recent-checkins">
+        <h2>Recent Check-ins</h2>
         {checkIns.length === 0 ? (
           <div className="empty-state">
-            <h3>No Check-Ins Found</h3>
-            <p>You haven't checked in yet. Check in to see your status here.</p>
+            <p>No recent check-ins</p>
             <button
               className="btn btn-primary"
               onClick={() => (window.location.href = "/check-in")}
@@ -179,68 +213,22 @@ export default function PatientDashboard() {
             </button>
           </div>
         ) : (
-          <div className="check-ins-scroll">
-            {checkIns.map((checkIn) => (
-              <div key={checkIn.id} className="check-in-card">
-                <div className="card-header">
-                  <div className="patient-info">
-                    <h3>
-                      {checkIn.patient
-                        ? `${checkIn.patient.first_name} ${checkIn.patient.last_name}`
-                        : `Checked in by ${
-                            user?.email?.split("@")[0] || "User"
-                          }`}
-                    </h3>
-                    <span className="check-in-id">ID: {checkIn.id}</span>
-                  </div>
-                  <div className={`status-badge status-${checkIn.status}`}>
+          <div className="checkins-list">
+            {checkIns.slice(0, 3).map((checkIn) => (
+              <div key={checkIn.id} className="checkin-item">
+                <div className="checkin-info">
+                  <h4>Check-in #{checkIn.id}</h4>
+                  <p>{new Date(checkIn.check_in_time).toLocaleDateString()}</p>
+                  <span className={`status-badge status-${checkIn.status}`}>
                     {checkIn.status.replace("_", " ").toUpperCase()}
-                  </div>
+                  </span>
                 </div>
-
-                <div className="card-content">
-                  <div className="info-row">
-                    <div className="info-item">
-                      <label>Triage Level:</label>
-                      <span
-                        className={`triage-level triage-${checkIn.triage_level}`}
-                      >
-                        {checkIn.triage_level.replace("_", " ").toUpperCase()}
-                      </span>
-                    </div>
-                    <div className="info-item">
-                      <label>Check-In Time:</label>
-                      <span>
-                        {new Date(checkIn.check_in_time).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="info-row">
-                    <div className="info-item">
-                      <label>Estimated Wait:</label>
-                      <span>{checkIn.estimated_wait_minutes} minutes</span>
-                    </div>
-                    <div className="info-item">
-                      <label>Notes:</label>
-                      <span>{checkIn.notes || "No notes"}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card-actions">
-                  <button
-                    className="btn btn-sm btn-secondary"
-                    onClick={() => handleEdit(checkIn)}
-                  >
-                    <FaEdit /> Edit
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleDelete(checkIn)}
-                  >
-                    <FaTrash /> Delete
-                  </button>
+                <div className="checkin-details">
+                  <p>
+                    Triage:{" "}
+                    {checkIn.triage_level.replace("_", " ").toUpperCase()}
+                  </p>
+                  <p>Wait: {checkIn.estimated_wait_minutes || 15} mins</p>
                 </div>
               </div>
             ))}
@@ -248,134 +236,88 @@ export default function PatientDashboard() {
         )}
       </div>
 
-      {/* Edit Modal */}
-      {showEditModal && editingCheckIn && (
+      {/* Profile Completion Modal */}
+      {showProfileModal && (
         <div className="modal-overlay">
-          <div className="edit-modal">
+          <div className="profile-modal">
             <div className="modal-header">
-              <h2>Edit Check-In</h2>
-              <button
-                className="close-btn"
-                onClick={() => setShowEditModal(false)}
-                aria-label="Close edit modal"
-                title="Close"
-              >
-                ×
-              </button>
+              <h2>Complete Your Profile</h2>
+              <p>
+                Please provide additional information to complete your profile
+              </p>
             </div>
 
-            <div className="modal-content">
+            <form onSubmit={handleProfileComplete} className="profile-form">
+              <div className="patient-id-highlight">
+                <strong>Patient ID:</strong> {patientProfile?.patient_id}
+              </div>
+
               <div className="form-group">
-                <label htmlFor="triage-level">Triage Level</label>
-                <select
-                  id="triage-level"
-                  defaultValue={editingCheckIn.triage_level}
+                <label htmlFor="address">Home Address *</label>
+                <textarea
+                  id="address"
+                  value={profileData.address}
                   onChange={(e) =>
-                    setEditingCheckIn({
-                      ...editingCheckIn,
-                      triage_level: e.target.value,
+                    setProfileData({ ...profileData, address: e.target.value })
+                  }
+                  placeholder="Enter your full address"
+                  rows={3}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="medical_aid">Medical Aid Scheme</label>
+                <input
+                  id="medical_aid"
+                  type="text"
+                  value={profileData.medical_aid}
+                  onChange={(e) =>
+                    setProfileData({
+                      ...profileData,
+                      medical_aid: e.target.value,
                     })
                   }
+                  placeholder="Enter your medical aid scheme (optional)"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="payment_method">
+                  Preferred Payment Method *
+                </label>
+                <select
+                  id="payment_method"
+                  value={profileData.payment_method}
+                  onChange={(e) =>
+                    setProfileData({
+                      ...profileData,
+                      payment_method: e.target.value,
+                    })
+                  }
+                  required
                 >
-                  <option value="immediate">Immediate</option>
-                  <option value="urgent">Urgent</option>
-                  <option value="semi_urgent">Semi-Urgent</option>
-                  <option value="non_urgent">Non-Urgent</option>
+                  <option value="cash">Cash</option>
+                  <option value="medical_aid">Medical Aid</option>
+                  <option value="insurance">Insurance</option>
+                  <option value="card">Credit/Debit Card</option>
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="notes">Notes</label>
-                <textarea
-                  id="notes"
-                  defaultValue={editingCheckIn.notes || ""}
-                  onChange={(e) =>
-                    setEditingCheckIn({
-                      ...editingCheckIn,
-                      notes: e.target.value,
-                    })
-                  }
-                  rows={3}
-                  placeholder="Add any additional notes about your condition..."
-                />
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowProfileModal(false)}
+                >
+                  Skip for Now
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Complete Profile
+                </button>
               </div>
-            </div>
-
-            <div className="modal-actions">
-              <button
-                className="btn btn-secondary"
-                onClick={() => setShowEditModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => handleUpdate(editingCheckIn)}
-              >
-                Save Changes
-              </button>
-            </div>
+            </form>
           </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && deleteCheckIn && (
-        <div className="modal-overlay">
-          <div className="delete-modal">
-            <div className="modal-header">
-              <h2>Confirm Delete</h2>
-              <button
-                className="close-btn"
-                onClick={cancelDelete}
-                aria-label="Close delete confirmation"
-                title="Close"
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <div className="modal-content">
-              <p>Are you sure you want to delete this check-in?</p>
-              <div className="delete-item-info">
-                <p>
-                  <strong>Patient:</strong>{" "}
-                  {deleteCheckIn.patient
-                    ? `${deleteCheckIn.patient.first_name} ${deleteCheckIn.patient.last_name}`
-                    : `Checked in by ${user?.email?.split("@")[0] || "User"}`}
-                </p>
-                <p>
-                  <strong>ID:</strong> {deleteCheckIn.id}
-                </p>
-                <p>
-                  <strong>Status:</strong>{" "}
-                  {deleteCheckIn.status.replace("_", " ").toUpperCase()}
-                </p>
-              </div>
-            </div>
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={cancelDelete}>
-                Cancel
-              </button>
-              <button className="btn btn-danger" onClick={confirmDelete}>
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Snackbar */}
-      {snackbar && (
-        <div className={`snackbar snackbar-${snackbar.type}`}>
-          <span>{snackbar.message}</span>
-          <button
-            onClick={hideSnackbar}
-            className="snackbar-close"
-            aria-label="Close notification"
-            title="Close notification"
-          >
-            <FaTimes />
-          </button>
         </div>
       )}
     </div>

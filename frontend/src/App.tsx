@@ -3,6 +3,7 @@ import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import PatientDashboard from "./pages/PatientDashboard";
 import PatientCheckIn from "./pages/PatientCheckIn";
+import PatientRegistration from "./pages/PatientRegistration";
 import TrackVisit from "./pages/TrackVisit";
 import PatientStatus from "./pages/PatientStatus";
 import QueueView from "./pages/QueueView";
@@ -11,7 +12,6 @@ import HealthcareCommunication from "./pages/HealthcareCommunication";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import PatientLogin from "./pages/auth/PatientLogin";
-import PatientRegister from "./pages/auth/PatientRegister";
 import Landing from "./pages/auth/Landing";
 import AdminPatientManagement from "./pages/AdminPatientManagement";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -57,7 +57,7 @@ function App() {
           path="/patient-register"
           element={
             <Layout>
-              <PatientRegister />
+              <PatientRegistration />
             </Layout>
           }
         />
@@ -136,7 +136,7 @@ function App() {
         <Route
           path="/healthcare-communication"
           element={
-            <ProtectedRoute allowedRoles={["admin"]}>
+            <ProtectedRoute allowedRoles={["admin", "patient"]}>
               <Layout>
                 <HealthcareCommunication />
               </Layout>
@@ -146,7 +146,7 @@ function App() {
         <Route
           path="/status/:patientId"
           element={
-            <ProtectedRoute allowedRoles={["admin"]}>
+            <ProtectedRoute allowedRoles={["admin", "patient"]}>
               <Layout>
                 <PatientStatus />
               </Layout>

@@ -58,11 +58,19 @@ export async function initializeDatabase() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS patients (
         id SERIAL PRIMARY KEY,
-        first_name VARCHAR(255) NOT NULL,
-        last_name VARCHAR(255) NOT NULL,
+        first_name VARCHAR(100),
+        last_name VARCHAR(100),
+        full_name VARCHAR(200),
+        national_id VARCHAR(50) UNIQUE,
+        password VARCHAR(255),
         date_of_birth DATE,
         phone_number VARCHAR(20),
-        email VARCHAR(255),
+        email VARCHAR(100) UNIQUE,
+        address TEXT,
+        medical_aid VARCHAR(100),
+        payment_method VARCHAR(20) DEFAULT 'cash',
+        patient_id VARCHAR(20) UNIQUE,
+        profile_complete BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );

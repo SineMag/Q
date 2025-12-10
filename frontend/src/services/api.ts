@@ -16,6 +16,9 @@ export const patientsApi = {
   create: (data: any) => api.post("/patients", data),
   update: (id: number, data: any) => api.put(`/patients/${id}`, data),
   delete: (id: number) => api.delete(`/patients/${id}`),
+  register: (data: any) => api.post("/patients/register", data),
+  updateProfile: (id: number, data: any) =>
+    api.put(`/patients/${id}/profile`, data),
 };
 
 export const queueApi = {

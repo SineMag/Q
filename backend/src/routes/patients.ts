@@ -1,9 +1,104 @@
 import express from "express";
 import { pool } from "../db/index.js";
-import { broadcastUpdate } from "../index.js";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
+
+// Helper function to generate patient ID
+function generatePatientId(): string {
+  const prefix = "QH";
+  const timestamp = Date.now().toString().slice(-6);
+  const random = Math.floor(Math.random() * 1000)
+    .toString()
+    .padStart(3, "0");
+  return `${prefix}${timestamp}${random}`;
+}
+
 // CRUD operations for patients..
+
+// Register new patient
+router.post("/register", async (req, res) => {
+  try {
+    const { full_name, national_id, password, email, phone_number } = req.body;
+
+    if (!full_name || !national_id || !password || !email) {
+      return res
+        .status(400)
+        .json({ error: "All required fields must be provided" });
+    }
+
+    // Check if patient already exists
+    const existingPatient = await pool.query(
+      "SELECT id FROM patients WHERE email = $1 OR national_id = $2",
+      [email, national_id]
+    );
+
+    if (existingPatient.rows.length > 0) {
+      return res
+        .status(400)
+        .json({
+          error: "Patient with this email or national ID already exists",
+        });
+    }
+
+    // Hash password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Generate patient ID
+    const patient_id = generatePatientId();
+
+    // Insert new patient
+    const result = await pool.query(
+      `INSERT INTO patients (full_name, national_id, password, email, phone_number, patient_id, profile_complete, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, false, CURRENT_TIMESTAMP)
+       RETURNING id, full_name, email, patient_id, profile_complete`,
+      [full_name, national_id, hashedPassword, email, phone_number, patient_id]
+    );
+
+    res.status(201).json({
+      message: "Patient registered successfully",
+      patient: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ error: "Failed to register patient" });
+  }
+});
+
+// Update patient profile
+router.put("/:id/profile", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { address, medical_aid, payment_method } = req.body;
+
+    if (!address || !payment_method) {
+      return res
+        .status(400)
+        .json({ error: "Address and payment method are required" });
+    }
+
+    const result = await pool.query(
+      `UPDATE patients 
+       SET address = $1, medical_aid = $2, payment_method = $3, profile_complete = true, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $4
+       RETURNING id, full_name, email, patient_id, address, medical_aid, payment_method, profile_complete`,
+      [address, medical_aid, payment_method, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    res.json({
+      message: "Profile updated successfully",
+      patient: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Profile update error:", error);
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+});
 
 // Get all patients
 router.get("/", async (req, res) => {
