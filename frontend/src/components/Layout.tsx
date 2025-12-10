@@ -23,6 +23,11 @@ export default function Layout({ children }: LayoutProps) {
   const isLandingPage = location.pathname === "/";
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
+  // Check if patient is logged in from localStorage
+  const patientData =
+    localStorage.getItem("patientData") || localStorage.getItem("patientInfo");
+  const isPatientLoggedIn = !!patientData;
+
   // Mock event data
   const publicEvents = [
     {
@@ -145,28 +150,52 @@ export default function Layout({ children }: LayoutProps) {
                         </Link>
                       </>
                     )}
-                    {user?.role === "patient" && (
+                    {(user || isPatientLoggedIn) && (
                       <>
-                        <Link to="/" className={isActive("/") ? "active" : ""}>
-                          Home
-                        </Link>
-                        <Link
-                          to="/patients"
-                          className={isActive("/patients") ? "active" : ""}
-                        >
-                          Patients
-                        </Link>
-                        <Link
-                          to="/check-in"
-                          className={isActive("/check-in") ? "active" : ""}
-                        >
-                          Check In
-                        </Link>
+                        {user ? (
+                          <>
+                            <Link
+                              to="/"
+                              className={isActive("/") ? "active" : ""}
+                            >
+                              Home
+                            </Link>
+                            <Link
+                              to="/patients"
+                              className={isActive("/patients") ? "active" : ""}
+                            >
+                              Patients
+                            </Link>
+                            <Link
+                              to="/check-in"
+                              className={isActive("/check-in") ? "active" : ""}
+                            >
+                              Check In
+                            </Link>
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              to="/patient-dashboard"
+                              className={
+                                isActive("/patient-dashboard") ? "active" : ""
+                              }
+                            >
+                              Dashboard
+                            </Link>
+                            <Link
+                              to="/check-in"
+                              className={isActive("/check-in") ? "active" : ""}
+                            >
+                              Check In
+                            </Link>
+                          </>
+                        )}
+                        <button onClick={logout} className="logout-button">
+                          Logout
+                        </button>
                       </>
                     )}
-                    <button onClick={logout} className="logout-button">
-                      Logout
-                    </button>
                   </>
                 ) : (
                   !isLandingPage && (
