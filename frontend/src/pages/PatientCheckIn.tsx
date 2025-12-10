@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { patientsApi, queueApi } from "../services/api";
+import { patientsApi, queueApi, aiApi } from "../services/api";
 import SuccessModal from "../components/SuccessModal";
 import Snackbar from "../components/Snackbar";
+import AITranslator from "../components/AITranslator";
 import "./PatientCheckIn.css";
 
 const TRIAGE_LEVELS = [
@@ -46,6 +47,10 @@ export default function PatientCheckIn() {
     notes: "",
   });
 
+  const [showAITranslator, setShowAITranslator] = useState(false);
+  const [translatedNotes, setTranslatedNotes] = useState("");
+  const [aiExplanation, setAiExplanation] = useState("");
+
   const handlePatientSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -71,11 +76,34 @@ export default function PatientCheckIn() {
 
     try {
       const patientId = (window as any).tempPatientId;
+
+      // Use AI to enhance notes if provided
+      let enhancedNotes = queueData.notes;
+      if (queueData.notes && translatedNotes) {
+        enhancedNotes = `${queueData.notes}\n\n[AI Translation]: ${translatedNotes}`;
+      }
+
       const response = await queueApi.checkIn({
         patient_id: patientId,
         triage_level: queueData.triage_level,
-        notes: queueData.notes,
+        notes: enhancedNotes,
       });
+
+      // Generate AI explanation for patient
+      if (queueData.notes) {
+        try {
+          const explanationResponse = await aiApi.generateExplanation(
+            queueData.triage_level,
+            "Initial assessment and triage",
+            "Wait for medical evaluation and follow triage protocol"
+          );
+          setAiExplanation(explanationResponse.explanation);
+        } catch (error) {
+          console.log(
+            "AI explanation generation failed, continuing without it"
+          );
+        }
+      }
 
       // Store patient info for modal
       setPatientInfo({
@@ -83,6 +111,7 @@ export default function PatientCheckIn() {
         id: patientId,
         triage_level: queueData.triage_level,
         estimated_wait: response.data.estimated_wait_minutes || "15-20",
+        ai_explanation: aiExplanation,
       });
 
       // Send SMS notification (in production, this would be a real SMS service)
@@ -129,6 +158,11 @@ export default function PatientCheckIn() {
   const handleCloseModal = () => {
     setShowSuccessModal(false);
     navigate(`/status/${patientInfo?.id}`);
+  };
+
+  const handleTranslation = (translatedText: string) => {
+    setTranslatedNotes(translatedText);
+    setShowAITranslator(false);
   };
 
   return (
@@ -269,6 +303,20 @@ export default function PatientCheckIn() {
               }
               placeholder="Any additional information about the patient's condition..."
             />
+            {queueData.notes && (
+              <button
+                type="button"
+                className="btn btn-secondary ai-translate-btn"
+                onClick={() => setShowAITranslator(true)}
+              >
+                🤖 Translate with AI
+              </button>
+            )}
+            {translatedNotes && (
+              <div className="ai-translation-preview">
+                <strong>AI Translation:</strong> {translatedNotes}
+              </div>
+            )}
           </div>
 
           <div className="form-actions">
@@ -297,6 +345,26 @@ export default function PatientCheckIn() {
         onClose={handleCloseModal}
         patientInfo={patientInfo}
       />
+
+      {/* AI Translator Modal */}
+      {showAITranslator && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>AI Medical Translator</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowAITranslator(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <AITranslator onTranslation={handleTranslation} />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Success Snackbar */}
       <Snackbar

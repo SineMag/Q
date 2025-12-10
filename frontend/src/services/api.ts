@@ -36,4 +36,50 @@ export const staffApi = {
     api.put(`/staff/${id}/availability`, { is_available: isAvailable }),
 };
 
+export const aiApi = {
+  translateMedicalText: async (
+    medicalText: string,
+    language: string = "english"
+  ) => {
+    const response = await api.post("/ai/translate", {
+      medicalText,
+      language,
+    });
+    return response.data;
+  },
+
+  generateExplanation: async (
+    condition: string,
+    treatment: string,
+    nextSteps?: string
+  ) => {
+    const response = await api.post("/ai/explain", {
+      condition,
+      treatment,
+      nextSteps,
+    });
+    return response.data;
+  },
+
+  simplifyClinicalNotes: async (clinicalNotes: string) => {
+    const response = await api.post("/ai/simplify-notes", {
+      clinicalNotes,
+    });
+    return response.data;
+  },
+
+  generateCarePlan: async (
+    condition: string,
+    patientAge: string,
+    mobilityLevel: string
+  ) => {
+    const response = await api.post("/ai/care-plan", {
+      condition,
+      patientAge,
+      mobilityLevel,
+    });
+    return response.data;
+  },
+};
+
 export default api;

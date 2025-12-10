@@ -7,6 +7,7 @@ import TrackVisit from "./pages/TrackVisit";
 import PatientStatus from "./pages/PatientStatus";
 import QueueView from "./pages/QueueView";
 import Patients from "./pages/Patients";
+import HealthcareCommunication from "./pages/HealthcareCommunication";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import PatientLogin from "./pages/auth/PatientLogin";
@@ -128,6 +129,16 @@ function App() {
             <ProtectedRoute allowedRoles={["admin"]}>
               <Layout>
                 <QueueView />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/healthcare-communication"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <Layout>
+                <HealthcareCommunication />
               </Layout>
             </ProtectedRoute>
           }

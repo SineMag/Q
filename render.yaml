@@ -1,10 +1,11 @@
 services:
+  # Backend Service
   - type: web
     name: q-backend
     runtime: node
-    repo: https://github.com/SineMag/Q 
-    region: oregon 
-    plan: free 
+    repo: https://github.com/SineMag/Q
+    region: oregon
+    plan: free
     rootDir: backend
     buildCommand: npm install && npm run build
     startCommand: npm start
@@ -18,8 +19,28 @@ services:
           property: connectionString
       - key: NODE_ENV
         value: production
+      - key: CORS_ORIGIN
+        value: https://q-frontend.onrender.com
+
+  # Frontend Service
+  - type: web
+    name: q-frontend
+    runtime: static
+    repo: https://github.com/SineMag/Q
+    region: oregon
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://q-backend.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://q-backend.onrender.com/api/*
 
 databases:
   - name: q-db
     databaseName: q_healthcare
-    plan: free 
+    plan: free

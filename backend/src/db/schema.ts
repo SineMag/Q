@@ -1,8 +1,8 @@
-import { pool } from './index.js';
+import { pool } from "./index.js";
 
 export async function initializeDatabase() {
   const client = await pool.connect();
-  
+
   try {
     // Create enum types
     await client.query(`
@@ -86,6 +86,24 @@ export async function initializeDatabase() {
       );
     `);
 
+    // Create clinical_encounters table for administrative burden reduction
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS clinical_encounters (
+        id SERIAL PRIMARY KEY,
+        patient_id INTEGER NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+        staff_id INTEGER NOT NULL REFERENCES staff(id) ON DELETE SET NULL,
+        encounter_type VARCHAR(50) NOT NULL,
+        symptoms TEXT,
+        examination TEXT,
+        diagnosis TEXT,
+        treatment TEXT,
+        notes TEXT,
+        structured_notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     // Create indexes
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_queue_status ON queue(status);
@@ -93,10 +111,13 @@ export async function initializeDatabase() {
       CREATE INDEX IF NOT EXISTS idx_queue_priority ON queue(priority_score DESC);
       CREATE INDEX IF NOT EXISTS idx_queue_patient ON queue(patient_id);
       CREATE INDEX IF NOT EXISTS idx_queue_staff ON queue(staff_id);
+      CREATE INDEX IF NOT EXISTS idx_clinical_encounters_patient ON clinical_encounters(patient_id);
+      CREATE INDEX IF NOT EXISTS idx_clinical_encounters_staff ON clinical_encounters(staff_id);
+      CREATE INDEX IF NOT EXISTS idx_clinical_encounters_date ON clinical_encounters(created_at);
     `);
 
     // Insert default staff members if none exist..fake data for testing
-    const staffCount = await client.query('SELECT COUNT(*) FROM staff');
+    const staffCount = await client.query("SELECT COUNT(*) FROM staff");
     if (parseInt(staffCount.rows[0].count) === 0) {
       await client.query(`
         INSERT INTO staff (name, role, is_available) VALUES
@@ -107,12 +128,11 @@ export async function initializeDatabase() {
       `);
     }
 
-    console.log('✅ Database schema initialized successfully');
+    console.log("✅ Database schema initialized successfully");
   } catch (error) {
-    console.error('❌ Error initializing database:', error);
+    console.error("❌ Error initializing database:", error);
     throw error;
   } finally {
     client.release();
   }
 }
-
