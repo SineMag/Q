@@ -171,9 +171,11 @@ export default function Layout({ children }: LayoutProps) {
                         </Link>
                       </>
                     )}
-                    <button onClick={logout} className="logout-button">
-                      Logout
-                    </button>
+                    {(user || isPatientLoggedIn) && (
+                      <button onClick={logout} className="logout-button">
+                        Logout
+                      </button>
+                    )}
                   </>
                 ) : (
                   !isLandingPage && (
