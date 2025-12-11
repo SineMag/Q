@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express";
 import { pool } from "../db/index.js";
+import { authenticate, requireRole, AuthRequest } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", authenticate, requireRole(['admin']), async (req: AuthRequest, res: Response) => {
   try {
     const { name, role, is_available } = req.body;
     if (!name || !role) {
@@ -22,7 +23,7 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authenticate, requireRole(['admin']), async (req: AuthRequest, res: Response) => {
   try {
     const result = await pool.query(
       `SELECT s.*, 
@@ -40,7 +41,7 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/available", async (req: Request, res: Response) => {
+router.get("/available", authenticate, requireRole(['admin']), async (req: AuthRequest, res: Response) => {
   try {
     const result = await pool.query(
       "SELECT * FROM staff WHERE is_available = true ORDER BY name"
@@ -52,7 +53,7 @@ router.get("/available", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id/availability", async (req: Request, res: Response) => {
+router.put("/:id/availability", authenticate, requireRole(['admin']), async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { is_available } = req.body;

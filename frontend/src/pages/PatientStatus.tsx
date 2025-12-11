@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { queueApi, patientsApi } from '../services/api';
+import AIChatModal from '../components/AIChatModal';
 import './PatientStatus.css';
 
 interface QueueEntry {
@@ -32,6 +33,8 @@ export default function PatientStatus() {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAIChat, setShowAIChat] = useState(false);
+  const [checkInTime, setCheckInTime] = useState<Date | null>(null);
 
   useEffect(() => {
     if (patientId) {
@@ -40,6 +43,27 @@ export default function PatientStatus() {
       return () => clearInterval(interval);
     }
   }, [patientId]);
+
+  useEffect(() => {
+    if (queueEntry && queueEntry.status === 'waiting' && !checkInTime) {
+      setCheckInTime(new Date(queueEntry.check_in_time));
+    }
+  }, [queueEntry, checkInTime]);
+
+  useEffect(() => {
+    if (checkInTime && queueEntry?.status === 'waiting') {
+      const checkInterval = setInterval(() => {
+        const now = new Date();
+        const elapsedMinutes = Math.floor((now.getTime() - checkInTime.getTime()) / 60000);
+        
+        if (elapsedMinutes >= 3 && !showAIChat) {
+          setShowAIChat(true);
+        }
+      }, 1000);
+
+      return () => clearInterval(checkInterval);
+    }
+  }, [checkInTime, queueEntry, showAIChat]);
 
   const loadData = async () => {
     if (!patientId) return;
@@ -199,6 +223,12 @@ export default function PatientStatus() {
           This page updates automatically. You can bookmark it to check your status at any time.
         </p>
       </div>
+
+      <AIChatModal
+        isVisible={showAIChat}
+        onClose={() => setShowAIChat(false)}
+        patientName={patient ? `${patient.first_name} ${patient.last_name}` : undefined}
+      />
     </div>
   );
 }

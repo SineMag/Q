@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { pool } from '../db/index.js';
 import { z } from 'zod';
+import { authenticate, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -24,7 +25,13 @@ router.post('/register', async (req, res) => {
       [email, hashedPassword, role]
     );
 
-    const token = jwt.sign({ id: newUser.rows[0].id, role: newUser.rows[0].role }, process.env.JWT_SECRET || 'secret', {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      console.error('JWT_SECRET is not configured');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
+
+    const token = jwt.sign({ id: newUser.rows[0].id, role: newUser.rows[0].role }, jwtSecret, {
       expiresIn: '1h',
     });
 
@@ -59,7 +66,13 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user.rows[0].id, role: user.rows[0].role }, process.env.JWT_SECRET || 'secret', {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      console.error('JWT_SECRET is not configured');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
+
+    const token = jwt.sign({ id: user.rows[0].id, role: user.rows[0].role }, jwtSecret, {
       expiresIn: '1h',
     });
 

@@ -1,6 +1,7 @@
 import express from "express";
 import { pool } from "../db/index.js";
 import bcrypt from "bcrypt";
+import { authenticate, requireRole, requireOwnershipOrAdmin, AuthRequest } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -89,7 +90,7 @@ router.put("/:id/profile", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", authenticate, requireRole(['admin']), async (req: AuthRequest, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM patients ORDER BY created_at DESC"
@@ -101,7 +102,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", authenticate, requireOwnershipOrAdmin('id'), async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query("SELECT * FROM patients WHERE id = $1", [
@@ -119,7 +120,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authenticate, requireRole(['admin']), async (req: AuthRequest, res) => {
   try {
     const { first_name, last_name, date_of_birth, phone_number, email } =
       req.body;
@@ -150,7 +151,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticate, requireOwnershipOrAdmin('id'), async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
     const { first_name, last_name, date_of_birth, phone_number, email } =
@@ -180,7 +181,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticate, requireRole(['admin']), async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
 

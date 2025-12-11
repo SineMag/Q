@@ -10,6 +10,31 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const patientsApi = {
   getAll: () => api.get("/patients"),
   getById: (id: number) => api.get(`/patients/${id}`),
@@ -80,6 +105,14 @@ export const aiApi = {
       condition,
       patientAge,
       mobilityLevel,
+    });
+    return response.data;
+  },
+
+  chat: async (message: string, patientName?: string) => {
+    const response = await api.post("/ai/chat", {
+      message,
+      patientName,
     });
     return response.data;
   },

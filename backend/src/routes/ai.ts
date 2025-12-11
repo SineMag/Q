@@ -1,9 +1,10 @@
 import express from "express";
 import { LlamaHealthcareService } from "../services/llamaService.js";
+import { authenticate, requireRole, AuthRequest } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/translate", async (req, res) => {
+router.post("/translate", authenticate, requireRole(['admin', 'patient']), async (req: AuthRequest, res) => {
   try {
     const { medicalText, language = "english" } = req.body;
 
@@ -24,7 +25,7 @@ router.post("/translate", async (req, res) => {
   }
 });
 
-router.post("/explain", async (req, res) => {
+router.post("/explain", authenticate, requireRole(['admin', 'patient']), async (req: AuthRequest, res) => {
   try {
     const { condition, treatment, nextSteps } = req.body;
 
@@ -47,7 +48,7 @@ router.post("/explain", async (req, res) => {
   }
 });
 
-router.post("/simplify-notes", async (req, res) => {
+router.post("/simplify-notes", authenticate, requireRole(['admin', 'patient']), async (req: AuthRequest, res) => {
   try {
     const { clinicalNotes } = req.body;
 
@@ -66,7 +67,7 @@ router.post("/simplify-notes", async (req, res) => {
   }
 });
 
-router.post("/care-plan", async (req, res) => {
+router.post("/care-plan", authenticate, requireRole(['admin', 'patient']), async (req: AuthRequest, res) => {
   try {
     const { condition, patientAge, mobilityLevel } = req.body;
 
@@ -84,6 +85,23 @@ router.post("/care-plan", async (req, res) => {
   } catch (error) {
     console.error("Care plan generation error:", error);
     res.status(500).json({ error: "Failed to generate care plan" });
+  }
+});
+
+router.post("/chat", authenticate, requireRole(['admin', 'patient']), async (req: AuthRequest, res) => {
+  try {
+    const { message, patientName } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: "Message is required" });
+    }
+
+    const response = await LlamaHealthcareService.chat(message, patientName);
+
+    res.json({ message: response });
+  } catch (error) {
+    console.error("Chat error:", error);
+    res.status(500).json({ error: "Failed to generate chat response" });
   }
 });
 

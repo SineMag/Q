@@ -15,10 +15,12 @@ import PatientLogin from "./pages/auth/PatientLogin";
 import Landing from "./pages/auth/Landing";
 import AdminPatientManagement from "./pages/AdminPatientManagement";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function App() {
   return (
-    <Router>
+    <ErrorBoundary>
+      <Router>
       <Routes>
         <Route
           path="/"
@@ -142,7 +144,8 @@ function App() {
           }
         />
       </Routes>
-    </Router>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

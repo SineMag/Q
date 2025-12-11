@@ -1,10 +1,11 @@
 import express from "express";
 import { LlamaHealthcareService } from "../services/llamaService.js";
 import { pool } from "../db/index.js";
+import { authenticate, requireRole, requireOwnershipOrAdmin, AuthRequest } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/document-encounter", async (req, res) => {
+router.post("/document-encounter", authenticate, requireRole(['admin']), async (req: AuthRequest, res) => {
   try {
     const {
       patientId,
@@ -63,7 +64,7 @@ router.post("/document-encounter", async (req, res) => {
   }
 });
 
-router.post("/generate-discharge-summary", async (req, res) => {
+router.post("/generate-discharge-summary", authenticate, requireRole(['admin']), async (req: AuthRequest, res) => {
   try {
     const { patientId, encounterIds } = req.body;
 
@@ -93,7 +94,7 @@ router.post("/generate-discharge-summary", async (req, res) => {
   }
 });
 
-router.post("/simplify-prescription", async (req, res) => {
+router.post("/simplify-prescription", authenticate, requireRole(['admin', 'patient']), async (req: AuthRequest, res) => {
   try {
     const { prescription, patientAge, patientLiteracy } = req.body;
 
@@ -117,7 +118,7 @@ router.post("/simplify-prescription", async (req, res) => {
   }
 });
 
-router.get("/encounters/:patientId", async (req, res) => {
+router.get("/encounters/:patientId", authenticate, requireOwnershipOrAdmin('patientId'), async (req: AuthRequest, res) => {
   try {
     const { patientId } = req.params;
 
@@ -139,7 +140,7 @@ router.get("/encounters/:patientId", async (req, res) => {
   }
 });
 
-router.get("/staff-workload/:staffId", async (req, res) => {
+router.get("/staff-workload/:staffId", authenticate, requireRole(['admin']), async (req: AuthRequest, res) => {
   try {
     const { staffId } = req.params;
     const { timeframe = "7" } = req.query;

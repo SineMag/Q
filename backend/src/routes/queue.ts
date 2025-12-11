@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { pool } from "../db/index.js";
 import { broadcastUpdate } from "../index.js";
+import { authenticate, requireRole, requireOwnershipOrAdmin, AuthRequest } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -16,11 +17,12 @@ function calculatePriorityScore(
   };
 
   const baseScore = triageWeights[triageLevel] || 0;
+  const waitBonus = Math.min(waitMinutes * 2, 100);
 
   return baseScore + waitBonus;
 }
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authenticate, requireRole(['admin']), async (req: AuthRequest, res: Response) => {
   try {
     const { status } = req.query;
 
@@ -54,7 +56,7 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/stats", async (req: Request, res: Response) => {
+router.get("/stats", authenticate, requireRole(['admin']), async (req: AuthRequest, res: Response) => {
   try {
     const stats = await pool.query(`
       SELECT 
@@ -123,7 +125,7 @@ router.post("/check-in", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", authenticate, requireRole(['admin']), async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { status, staff_id, triage_level, notes, estimated_wait_minutes } =
@@ -205,7 +207,7 @@ router.put("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/:id/complete", async (req: Request, res: Response) => {
+router.post("/:id/complete", authenticate, requireRole(['admin']), async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -239,7 +241,7 @@ router.post("/:id/complete", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/patient/:patientId", async (req: Request, res: Response) => {
+router.get("/patient/:patientId", authenticate, requireOwnershipOrAdmin('patientId'), async (req: AuthRequest, res: Response) => {
   try {
     const { patientId } = req.params;
 
